@@ -26,9 +26,20 @@ passport_1.default.use(new passport_spotify_1.Strategy({
 }, (accessToken, refreshToken, expires_in, profile, done) => {
     done(null, profile);
 }));
+app.get('/', (req, res) => {
+    res.send('¡Bienvenido a mi aplicación!');
+});
 app.get('/auth/spotify', passport_1.default.authenticate('spotify'));
 app.get('/auth/spotify/callback', passport_1.default.authenticate('spotify', { failureRedirect: '/login' }), (req, res) => {
     res.redirect('/success');
+});
+app.get('/success', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.send('¡Autenticación exitosa!');
+    }
+    else {
+        res.send('Error de autenticación');
+    }
 });
 app.listen(3000, () => {
     console.log('Servidor en ejecución en http://localhost:3000');

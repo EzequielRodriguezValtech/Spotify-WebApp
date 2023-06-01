@@ -39,6 +39,11 @@ passport.use(
   )
 );
 
+app.get('/', (req, res) => {
+  res.send('¡Bienvenido a mi aplicación!');
+});
+
+
 app.get('/auth/spotify', passport.authenticate('spotify'));
 
 app.get(
@@ -49,6 +54,18 @@ app.get(
     res.redirect('/success');
   }
 );
+
+app.get('/success', (req, res) => {
+  if (req.isAuthenticated()) {
+    // El usuario se autenticó correctamente
+    // Realiza acciones adicionales aquí
+    res.send('¡Autenticación exitosa!');
+  } else {
+    // El usuario no se autenticó correctamente
+    res.send('Error de autenticación');
+  }
+});
+
 
 app.listen(3000, () => {
   console.log('Servidor en ejecución en http://localhost:3000');

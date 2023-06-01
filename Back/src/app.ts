@@ -2,11 +2,14 @@ import express, { Request, Response } from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as SpotifyStrategy } from 'passport-spotify';
+import { PrismaClient } from '@prisma/client'
 import {
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
   SPOTIFY_CALLBACK_URL,
 } from './config/config'; // Archivo de configuración
+
+export const prisma = new PrismaClient()
 
 const app = express();
 

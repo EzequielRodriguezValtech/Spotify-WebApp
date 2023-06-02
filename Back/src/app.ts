@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as SpotifyStrategy } from 'passport-spotify';
@@ -7,7 +7,10 @@ import {
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
   SPOTIFY_CALLBACK_URL,
-} from './config/config'; // Archivo de configuración
+} from './config/config'; // Archivo de configuración;
+import { getFavoriteSongs } from './controllers/favouriteSongsController';
+
+
 
 export const prisma = new PrismaClient()
 
@@ -39,12 +42,29 @@ passport.use(
   )
 );
 
-app.get('/', (req, res) => {
-  res.send('¡Bienvenido a mi aplicación!');
+// Middleware para verificar la autenticación y el token de acceso
+function authenticateMiddleware(req: Request, res: Response, next: NextFunction) {
+  if (req.isAuthenticated() && req.session.accessToken) {
+    // El usuario está autenticado y el token de acceso está presente en la sesión
+    next();
+  } else {
+    // El usuario no está autenticado o no se encontró el token de acceso en la sesión
+    res.status(401).json({ error: 'No autenticado' });
+  }
+}
+
+// Ruta protegida que requiere autenticación y token de acceso
+app.get('/protected', authenticateMiddleware, (req: Request, res: Response) => {
+  // Realiza acciones adicionales aquí
+  res.send('Ruta protegida');
 });
 
 
 app.get('/auth/spotify', passport.authenticate('spotify'));
+
+app.get('/', authenticateMiddleware,(req, res) => {
+  res.send('¡Bienvenido a mi aplicación!');
+});
 
 app.get(
   '/auth/spotify/callback',
@@ -66,7 +86,8 @@ app.get('/success', (req, res) => {
   }
 });
 
+app.get('/favorites', authenticateMiddleware, getFavoriteSongs);
 
 app.listen(3000, () => {
-  console.log('Servidor en ejecución en http://localhost:3000');
+  console.log('Servidor en ejecución en http://localhost:3000/auth/Spotify');
 });

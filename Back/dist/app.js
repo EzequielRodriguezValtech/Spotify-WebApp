@@ -10,6 +10,7 @@ const passport_1 = __importDefault(require("passport"));
 const passport_spotify_1 = require("passport-spotify");
 const client_1 = require("@prisma/client");
 const config_1 = require("./config/config");
+const favouriteSongsController_1 = require("./controllers/favouriteSongsController");
 exports.prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
 app.use((0, express_session_1.default)({
@@ -26,10 +27,21 @@ passport_1.default.use(new passport_spotify_1.Strategy({
 }, (accessToken, refreshToken, expires_in, profile, done) => {
     done(null, profile);
 }));
-app.get('/', (req, res) => {
-    res.send('¡Bienvenido a mi aplicación!');
+function authenticateMiddleware(req, res, next) {
+    if (req.isAuthenticated() && req.session.accessToken) {
+        next();
+    }
+    else {
+        res.status(401).json({ error: 'No autenticado' });
+    }
+}
+app.get('/protected', authenticateMiddleware, (req, res) => {
+    res.send('Ruta protegida');
 });
 app.get('/auth/spotify', passport_1.default.authenticate('spotify'));
+app.get('/', authenticateMiddleware, (req, res) => {
+    res.send('¡Bienvenido a mi aplicación!');
+});
 app.get('/auth/spotify/callback', passport_1.default.authenticate('spotify', { failureRedirect: '/login' }), (req, res) => {
     res.redirect('/success');
 });
@@ -41,6 +53,7 @@ app.get('/success', (req, res) => {
         res.send('Error de autenticación');
     }
 });
+app.get('/favorites', authenticateMiddleware, favouriteSongsController_1.getFavoriteSongs);
 app.listen(3000, () => {
-    console.log('Servidor en ejecución en http://localhost:3000');
+    console.log('Servidor en ejecución en http://localhost:3000/auth/Spotify');
 });

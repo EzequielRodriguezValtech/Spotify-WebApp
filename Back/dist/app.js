@@ -27,19 +27,14 @@ passport_1.default.use(new passport_spotify_1.Strategy({
 }, (accessToken, refreshToken, expires_in, profile, done) => {
     done(null, profile);
 }));
-function authenticateMiddleware(req, res, next) {
-    if (req.isAuthenticated() && req.session.accessToken) {
-        next();
-    }
-    else {
-        res.status(401).json({ error: 'No autenticado' });
-    }
-}
-app.get('/protected', authenticateMiddleware, (req, res) => {
-    res.send('Ruta protegida');
+passport_1.default.serializeUser((user, done) => {
+    done(null, user);
+});
+passport_1.default.deserializeUser((user, done) => {
+    done(null, user);
 });
 app.get('/auth/spotify', passport_1.default.authenticate('spotify'));
-app.get('/', authenticateMiddleware, (req, res) => {
+app.get('/', (req, res) => {
     res.send('¡Bienvenido a mi aplicación!');
 });
 app.get('/auth/spotify/callback', passport_1.default.authenticate('spotify', { failureRedirect: '/login' }), (req, res) => {
@@ -53,7 +48,7 @@ app.get('/success', (req, res) => {
         res.send('Error de autenticación');
     }
 });
-app.get('/favorites', authenticateMiddleware, favouriteSongsController_1.getFavoriteSongs);
+app.get('/favorites', favouriteSongsController_1.getFavoriteSongs);
 app.listen(3000, () => {
     console.log('Servidor en ejecución en http://localhost:3000/auth/Spotify');
 });

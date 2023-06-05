@@ -1,19 +1,18 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as SpotifyStrategy } from 'passport-spotify';
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+
+
 import {
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
   SPOTIFY_CALLBACK_URL,
-} from './config/config'; // Archivo de configuración;
+} from './config/config';
 import { getFavoriteSongs } from './controllers/favouriteSongsController';
 
-
-
-export const prisma = new PrismaClient()
-
+const prisma = new PrismaClient();
 const app = express();
 
 app.use(
@@ -35,50 +34,62 @@ passport.use(
       callbackURL: SPOTIFY_CALLBACK_URL,
     },
     (accessToken, refreshToken, expires_in, profile, done) => {
-      // Realiza acciones con el token de acceso y el perfil del usuario
-      // Por ejemplo, puedes guardar la información en una base de datos o realizar redirecciones
-      done(null, profile);
+      const user = {
+        id: profile.id,
+        username: profile.username,
+        accessToken: accessToken,
+      };
+      done(null, user);
     }
   )
 );
 
-passport.serializeUser((user: User, done) => {
+passport.serializeUser((user: any, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((user: User, done) => {
+passport.deserializeUser((user: any, done) => {
   done(null, user);
+});
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Welcome to my application');
 });
 
 
 app.get('/auth/spotify', passport.authenticate('spotify'));
 
-app.get('/', (req, res) => {
-  res.send('¡Bienvenido a mi aplicación!');
-});
-
 app.get(
   '/auth/spotify/callback',
   passport.authenticate('spotify', { failureRedirect: '/login' }),
   (req: Request, res: Response) => {
-    // Realiza acciones después de la autenticación
+    req.session.accessToken = (req.user as any).accessToken;
+    req.session.save();
     res.redirect('/success');
   }
 );
 
-app.get('/success', (req, res) => {
+
+
+app.get('/success', (req: Request, res: Response) => {
   if (req.isAuthenticated()) {
-    // El usuario se autenticó correctamente
-    // Realiza acciones adicionales aquí
-    res.send('¡Autenticación exitosa!');
+    const user = req.user as any;
+    const userAccessToken = user.accessToken;
+
+    if (userAccessToken) {
+      // Realiza acciones con el accessToken del usuario
+      res.send('Authentication successful');
+      console.log(userAccessToken)
+    } else {
+      res.send('Error: Access token not found');
+    }
   } else {
-    // El usuario no se autenticó correctamente
-    res.send('Error de autenticación');
+    res.send('Error: Authentication failed');
   }
 });
 
-app.get('/favorites', getFavoriteSongs);
+app.get('/favoriteSongs', getFavoriteSongs);
 
 app.listen(3000, () => {
-  console.log('Servidor en ejecución en http://localhost:3000/auth/Spotify');
+  console.log('Server is running on http://localhost:3000');
 });

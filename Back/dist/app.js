@@ -86,7 +86,7 @@ app.get('/', function (req, res) {
     res.send('Welcome to the server!');
 });
 app.get('/favorites', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, accessToken, response, items, error_1;
+    var user, accessToken, response, items, songNames, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -96,7 +96,7 @@ app.get('/favorites', function (req, res) { return __awaiter(void 0, void 0, voi
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4, axios_1.default.get('https://api.spotify.com/v1/me/tracks', {
+                return [4, axios_1.default.get('https://api.spotify.com/v1/me/top/tracks', {
                         headers: {
                             Authorization: "Bearer ".concat(accessToken),
                         },
@@ -107,7 +107,8 @@ app.get('/favorites', function (req, res) { return __awaiter(void 0, void 0, voi
             case 2:
                 response = _a.sent();
                 items = response.data.items;
-                res.json(items);
+                songNames = items.map(function (item) { return item.name; });
+                res.json(songNames);
                 return [3, 4];
             case 3:
                 error_1 = _a.sent();

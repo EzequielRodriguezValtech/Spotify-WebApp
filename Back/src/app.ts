@@ -84,7 +84,7 @@ app.get('/favorites', async (req: Request, res: Response) => {
     const accessToken = user.accessToken;
 
     try {
-      const response = await axios.get('https://api.spotify.com/v1/me/tracks', {
+      const response = await axios.get('https://api.spotify.com/v1/me/top/tracks', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -95,8 +95,9 @@ app.get('/favorites', async (req: Request, res: Response) => {
 
       const { items } = response.data;
       // Aquí puedes procesar los datos de las canciones y enviar la respuesta al cliente
+      const songNames = items.map((item:any) => item.name)
 
-      res.json(items);
+      res.json(songNames);
     } catch (error) {
       console.error('Error al obtener las canciones principales:', error);
       res.status(500).json({ error: 'Error al obtener las canciones principales' });

@@ -1,9 +1,8 @@
 import express, { Request, Response } from 'express';
-import session from 'express-session';
+import session, { SessionData } from 'express-session';
 import passport from 'passport';
 import { Strategy as SpotifyStrategy } from 'passport-spotify';
-import { PrismaClient } from '@prisma/client';
-
+import { randomBytes, createSecretKey } from 'crypto';
 
 import {
   SPOTIFY_CLIENT_ID,
@@ -12,19 +11,41 @@ import {
 } from './config/config';
 import { getFavoriteSongs } from './controllers/favouriteSongsController';
 
-const prisma = new PrismaClient();
+// Define una interfaz personalizada para extender el tipo de sesión
+interface CustomSessionData extends SessionData {
+  user?: any; // Cambia 'any' por el tipo adecuado de usuario
+}
+
+const generateSecret = (): string => {
+  const secretBytes = randomBytes(32);
+  const secretKey = createSecretKey(secretBytes);
+  return secretKey.export().toString('hex');
+};
+
+export const SESSION_SECRET = generateSecret();
+
 const app = express();
+
+app.use(express.static(__dirname + '/public'));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: SPOTIFY_CLIENT_SECRET,
-    resave: true,
+    secret: SESSION_SECRET,
+    resave: false,
     saveUninitialized: true,
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.serializeUser((user: any, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser<any, any>((user, done) => {
+  done(null, user);
+});
 
 passport.use(
   new SpotifyStrategy(
@@ -33,63 +54,51 @@ passport.use(
       clientSecret: SPOTIFY_CLIENT_SECRET,
       callbackURL: SPOTIFY_CALLBACK_URL,
     },
-    (accessToken, refreshToken, expires_in, profile, done) => {
+    (accessToken, refreshToken, expiresIn, profile, done) => {
+      // Aquí puedes realizar las acciones necesarias con los datos del usuario,
+      // como almacenarlos en la base de datos, etc.
       const user = {
-        id: profile.id,
-        username: profile.username,
+        profile: profile,
         accessToken: accessToken,
+        refreshToken: refreshToken,
+        expiresIn: expiresIn,
+        
       };
+      console.log(accessToken);
       done(null, user);
     }
   )
 );
 
-passport.serializeUser((user: any, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user: any, done) => {
-  done(null, user);
-});
-
 app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome to my application');
+  const user = req.user as any;
+  if (user) {
+    res.send(`¡Bienvenido de nuevo, ${user.profile.displayName}!`);
+  } else {
+    res.send('¡Bienvenido a mi aplicación!');
+  }
 });
 
-
-app.get('/auth/spotify', passport.authenticate('spotify'));
+app.get(
+  '/login',
+  passport.authenticate('spotify', {
+    scope: ['user-read-private', 'user-read-email'],
+  })
+);
 
 app.get(
   '/auth/spotify/callback',
-  passport.authenticate('spotify', { failureRedirect: '/login' }),
-  (req: Request, res: Response) => {
-    req.session.accessToken = (req.user as any).accessToken;
-    req.session.save();
-    res.redirect('/success');
+  passport.authenticate('spotify', {
+    failureRedirect: '/login',
+  }),
+  (_req: Request, res: Response) => {
+    res.redirect('/');
   }
 );
 
+app.get(
+  '/favorites', getFavoriteSongs
+);
 
-
-app.get('/success', (req: Request, res: Response) => {
-  if (req.isAuthenticated()) {
-    const user = req.user as any;
-    const userAccessToken = user.accessToken;
-
-    if (userAccessToken) {
-      // Realiza acciones con el accessToken del usuario
-      res.send('Authentication successful');
-      console.log(userAccessToken)
-    } else {
-      res.send('Error: Access token not found');
-    }
-  } else {
-    res.send('Error: Authentication failed');
-  }
-});
-
-app.get('/favoriteSongs', getFavoriteSongs);
-
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
+console.log('Listening on 3000');
+app.listen(3000);

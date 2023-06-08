@@ -2,12 +2,20 @@ import express, { Request, Response } from 'express';
 import passport from 'passport';
 import { Strategy as SpotifyStrategy, Profile } from 'passport-spotify';
 import session from 'express-session';
+import { PrismaClient } from '@prisma/client';
+import * as path from 'path';
 import {
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
   SPOTIFY_CALLBACK_URL,
 } from './config/config';
 import axios from 'axios';
+import { Song } from '@prisma/client';
+import ejs from 'ejs';
+
+
+
+const prisma = new PrismaClient();
 
 // Configuración de Passport
 passport.use(
@@ -44,6 +52,17 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+
+// Configurar la carpeta estática
+app.use(express.static(path.join(__dirname, '..', 'front', 'public')));
+
+// Configurar la ubicación de las vistas
+app.set('views', path.join(__dirname, 'front/views'));
+
+// Configurar el motor de plantillas
+app.set('view engine', 'ejs');
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -76,11 +95,26 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 
+// function formatDuration(durationMs: number): string {
+//   const totalSeconds = Math.floor(durationMs / 1000);
+//   const hours = Math.floor(totalSeconds / 3600);
+//   const minutes = Math.floor((totalSeconds % 3600) / 60);
+//   const seconds = totalSeconds % 60;
+
+//   let formattedDuration = '';
+//   if (hours > 0) {
+//     formattedDuration += `${hours}:`;
+//   }
+//   formattedDuration += `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+//   return formattedDuration;
+// }
+
+
 // Ruta de canciones favoritas protegida
 app.get('/favorites', async (req: Request, res: Response) => {
   if (req.user) {
     const user = req.user as { accessToken: string };
-
     const accessToken = user.accessToken;
 
     try {
@@ -94,10 +128,45 @@ app.get('/favorites', async (req: Request, res: Response) => {
       });
 
       const { items } = response.data;
-      // Aquí puedes procesar los datos de las canciones y enviar la respuesta al cliente
-      const songNames = items.map((item:any) => item.name)
+      const songData = items.map((item: any) => {
+        return {
+          name: item.name,
+          artist: item.artists[0]?.name || '',
+          duration: item.duration_ms || 0,
+          album: item.album.name,
+          albumImage: item.album.images[0]?.url || ''
+        };
+      });
 
-      res.json(songNames);
+      // Filtra las canciones existentes en la base de datos
+      const existingSongs = await prisma.song.findMany({
+        where: {
+          name: { in: songData.map((song: { name: any; }) => song.name) },
+        },
+      });
+
+      // Filtra las canciones que no existen en la base de datos
+      const uniqueSongs = songData.filter((song: { name: string; }) => {
+        return !existingSongs.find((existingSong) => existingSong.name === song.name);
+      });
+
+      // Guarda las canciones únicas en la base de datos
+      const createdSongs = await prisma.song.createMany({
+        data: uniqueSongs,
+      });
+
+      console.log('Canciones creadas:', createdSongs);
+
+      // Obtén las 5 canciones principales para enviar en la respuesta
+      const topSongs: Song[] = songData.slice(0, 5);
+
+      ejs.renderFile(__dirname + '/../front/views/favorites.ejs', {songs: topSongs}, (err, html) => {
+        if(err){
+          console.error('Error al renderizar el archivo favorites.ejs', err)
+        } else {
+          res.send(html);
+        }
+      });
     } catch (error) {
       console.error('Error al obtener las canciones principales:', error);
       res.status(500).json({ error: 'Error al obtener las canciones principales' });

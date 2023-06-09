@@ -5,6 +5,7 @@ CREATE TABLE "Song" (
     "artist" TEXT NOT NULL,
     "duration" INTEGER NOT NULL,
     "album" TEXT NOT NULL,
+    "albumImage" TEXT NOT NULL,
 
     CONSTRAINT "Song_pkey" PRIMARY KEY ("id")
 );

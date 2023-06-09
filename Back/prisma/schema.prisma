@@ -1,3 +1,7 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
@@ -7,18 +11,10 @@ generator client {
     provider = "prisma-client-js"
 }
 
-model FavouriteSongs {
-    id     String    @id
-    name   String
-    artist String
-    album  String
-    userId String
-}
-
-model User {
+model Song {
   id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  name      String
+  artist    String
+  duration  Int
+  album     String
 }

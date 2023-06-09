@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Favorite Songs</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>My Favorite Songs</h1>
+    </header>
+    <main>
+        <ul class="song-list">
+            <% songs.forEach((song) => { %>
+                <li class="song-item">
+                    <div class="song-info">
+                        <h2><%= song.name %></h2>
+                        <p>by <%= song.artist %></p>
+                        <p>Duration: <%= song.duration %></p>
+                        <p>Album: <%= song.album %></p>
+                    </div>
+                    <div class="album-cover">
+                        <img src="<%= song.albumImage %>" alt="Album Cover">
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    </main>
+</body>
+</html>

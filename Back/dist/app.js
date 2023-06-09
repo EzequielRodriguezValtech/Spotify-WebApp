@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -43,8 +66,12 @@ var express_1 = __importDefault(require("express"));
 var passport_1 = __importDefault(require("passport"));
 var passport_spotify_1 = require("passport-spotify");
 var express_session_1 = __importDefault(require("express-session"));
+var client_1 = require("@prisma/client");
+var path = __importStar(require("path"));
 var config_1 = require("./config/config");
 var axios_1 = __importDefault(require("axios"));
+var ejs_1 = __importDefault(require("ejs"));
+var prisma = new client_1.PrismaClient();
 passport_1.default.use(new passport_spotify_1.Strategy({
     clientID: config_1.SPOTIFY_CLIENT_ID,
     clientSecret: config_1.SPOTIFY_CLIENT_SECRET,
@@ -66,6 +93,9 @@ app.use((0, express_session_1.default)({
     resave: true,
     saveUninitialized: true,
 }));
+app.use(express_1.default.static(path.join(__dirname, '..', 'front', 'public')));
+app.set('views', path.join(__dirname, 'front/views'));
+app.set('view engine', 'ejs');
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.get('/auth/spotify', passport_1.default.authenticate('spotify'));
@@ -86,16 +116,16 @@ app.get('/', function (req, res) {
     res.send('Welcome to the server!');
 });
 app.get('/favorites', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, accessToken, response, items, songNames, error_1;
+    var user, accessToken, response, items, songData, existingSongs_1, uniqueSongs, createdSongs, topSongs, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!req.user) return [3, 5];
+                if (!req.user) return [3, 7];
                 user = req.user;
                 accessToken = user.accessToken;
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 5, , 6]);
                 return [4, axios_1.default.get('https://api.spotify.com/v1/me/top/tracks', {
                         headers: {
                             Authorization: "Bearer ".concat(accessToken),
@@ -107,19 +137,52 @@ app.get('/favorites', function (req, res) { return __awaiter(void 0, void 0, voi
             case 2:
                 response = _a.sent();
                 items = response.data.items;
-                songNames = items.map(function (item) { return item.name; });
-                res.json(songNames);
-                return [3, 4];
+                songData = items.map(function (item) {
+                    var _a, _b;
+                    return {
+                        name: item.name,
+                        artist: ((_a = item.artists[0]) === null || _a === void 0 ? void 0 : _a.name) || '',
+                        duration: item.duration_ms || 0,
+                        album: item.album.name,
+                        albumImage: ((_b = item.album.images[0]) === null || _b === void 0 ? void 0 : _b.url) || ''
+                    };
+                });
+                return [4, prisma.song.findMany({
+                        where: {
+                            name: { in: songData.map(function (song) { return song.name; }) },
+                        },
+                    })];
             case 3:
+                existingSongs_1 = _a.sent();
+                uniqueSongs = songData.filter(function (song) {
+                    return !existingSongs_1.find(function (existingSong) { return existingSong.name === song.name; });
+                });
+                return [4, prisma.song.createMany({
+                        data: uniqueSongs,
+                    })];
+            case 4:
+                createdSongs = _a.sent();
+                console.log('Canciones creadas:', createdSongs);
+                topSongs = songData.slice(0, 5);
+                ejs_1.default.renderFile(__dirname + '/../front/views/favorites.ejs', { songs: topSongs }, function (err, html) {
+                    if (err) {
+                        console.error('Error al renderizar el archivo favorites.ejs', err);
+                    }
+                    else {
+                        res.send(html);
+                    }
+                });
+                return [3, 6];
+            case 5:
                 error_1 = _a.sent();
                 console.error('Error al obtener las canciones principales:', error_1);
                 res.status(500).json({ error: 'Error al obtener las canciones principales' });
-                return [3, 4];
-            case 4: return [3, 6];
-            case 5:
+                return [3, 6];
+            case 6: return [3, 8];
+            case 7:
                 res.status(401).json({ error: 'No se ha proporcionado un token de acceso válido' });
-                _a.label = 6;
-            case 6: return [2];
+                _a.label = 8;
+            case 8: return [2];
         }
     });
 }); });

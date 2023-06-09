@@ -4,4 +4,5 @@ interface Song {
     artist: string;
     duration: number;
     album: string;
+    albumImage: string;
   }

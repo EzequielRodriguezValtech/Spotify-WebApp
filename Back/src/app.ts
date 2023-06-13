@@ -23,7 +23,7 @@ passport.use(
       scope: ['user-top-read', 'user-read-email', 'user-read-private'],
       showDialog: true,
     },
-    async (accessToken, refreshToken, expires_in, profile, done) => {
+    async (accessToken: any, refreshToken: any, expires_in: any, profile: any, done: (arg0: null, arg1: { profile: any; accessToken: any; refreshToken: any; expires_in: any; }) => any) => {
       const user = { profile, accessToken, refreshToken, expires_in };
       return done(null, user);
       // try {
@@ -61,12 +61,12 @@ passport.use(
 passport.authenticate('spotify', { failureRedirect: '/auth/spotify' });
 
 // Serializar el usuario en la sesión
-passport.serializeUser((user, done) => {
+passport.serializeUser((user: any, done: (arg0: null, arg1: any) => void) => {
   done(null, user);
 });
 
 // Deserializar el usuario de la sesión
-passport.deserializeUser<any, any>((user, done) => {
+passport.deserializeUser<any, any>((user: any, done: (arg0: null, arg1: any) => void) => {
   done(null, user);
 });
 
@@ -74,7 +74,7 @@ passport.deserializeUser<any, any>((user, done) => {
 const app = express();
 app.use(
   session({
-    secret: 'etoeunsecreto',
+    secret: 'secreto123',
     resave: true,
     saveUninitialized: true,
   })

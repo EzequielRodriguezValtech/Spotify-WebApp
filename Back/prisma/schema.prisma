@@ -11,9 +11,30 @@ generator client {
 }
 
 model Song {
+<<<<<<< HEAD
   id         Int    @id @default(autoincrement())
   name       String
   artist     String
   duration   Int
   album      String
+=======
+  id       Int    @id @default(autoincrement())
+  name     String
+  artist   String
+  duration Int
+  album    String
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  spotifyId    String   @unique
+  name         String
+  email        String
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  Songs        Song[]
+>>>>>>> main
 }

@@ -1,45 +1,25 @@
 import express from 'express';
-<<<<<<< HEAD
-import passport from 'passport';
-import { Strategy as SpotifyStrategy } from 'passport-spotify';
-import session from 'express-session';
-import * as path from 'path';
-import  spotifyRouter  from "./routes/routes";
-=======
 import passport, { use } from 'passport';
 import { Strategy as SpotifyStrategy } from 'passport-spotify';
 import session from 'express-session';
 import * as path from 'path';
 import spotifyRouter from './routes/routes';
 import { PrismaClient } from '@prisma/client';
->>>>>>> main
 import {
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
   SPOTIFY_CALLBACK_URL,
 } from './config/config';
 
-<<<<<<< HEAD
-
-// Configuración de Passport
-=======
 const prisma = new PrismaClient();
 
 // Configuración de Passport1
->>>>>>> main
 passport.use(
   new SpotifyStrategy(
     {
       clientID: SPOTIFY_CLIENT_ID,
       clientSecret: SPOTIFY_CLIENT_SECRET,
       callbackURL: SPOTIFY_CALLBACK_URL,
-<<<<<<< HEAD
-      scope: ['user-top-read']
-    },
-    (accessToken, refreshToken, expires_in, profile, done) => {
-      const user = { profile, accessToken, refreshToken, expires_in: 5000};
-      return done(null, user);
-=======
       scope: ['user-top-read', 'user-read-email', 'user-read-private'],
       showDialog: true,
     },
@@ -74,7 +54,6 @@ passport.use(
       // } catch (error) {
       //   // return done(error)
       // }
->>>>>>> main
     }
   )
 );
@@ -82,20 +61,12 @@ passport.use(
 passport.authenticate('spotify', { failureRedirect: '/auth/spotify' });
 
 // Serializar el usuario en la sesión
-<<<<<<< HEAD
 passport.serializeUser((user, done) => {
-=======
-passport.serializeUser((user: any, done: (arg0: null, arg1: any) => void) => {
->>>>>>> main
   done(null, user);
 });
 
 // Deserializar el usuario de la sesión
-<<<<<<< HEAD
-passport.deserializeUser<any, any>((user, done) => {
-=======
 passport.deserializeUser<any, any>((user: any, done: (arg0: null, arg1: any) => void) => {
->>>>>>> main
   done(null, user);
 });
 
@@ -103,11 +74,7 @@ passport.deserializeUser<any, any>((user: any, done: (arg0: null, arg1: any) => 
 const app = express();
 app.use(
   session({
-<<<<<<< HEAD
     secret: SPOTIFY_CLIENT_SECRET,
-=======
-    secret: 'secreto123',
->>>>>>> main
     resave: true,
     saveUninitialized: true,
   })
@@ -127,25 +94,14 @@ app.use(passport.session());
 
 // Routes
 app.use('/', spotifyRouter);
-<<<<<<< HEAD
-app.use('/auth/spotify', passport.authenticate('spotify'), spotifyRouter);
-app.use('/auth/spotify/callback', spotifyRouter);
-app.use('/profile', spotifyRouter);
-app.use('/favorites', spotifyRouter);
-=======
 app.use('/auth/spotify', spotifyRouter);
 app.use('/auth/spotify/callback', spotifyRouter);
 app.use('/profile', spotifyRouter);
 app.use('/favorites', spotifyRouter);
 app.use('/logout', spotifyRouter);
->>>>>>> main
 
 // Puerto de escucha
 const port = 3000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> main

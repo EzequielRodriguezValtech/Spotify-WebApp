@@ -15,10 +15,6 @@ export async function GetProtectedProfile(req: Request, res: Response) {
       `Welcome, ${profile.displayName}!<br>Access Token: ${accessToken}<br>Refresh Token: ${refreshToken}`
     );
   } else {
-<<<<<<< HEAD
     res.redirect('/auth/spotify');
-=======
-    res.redirect('/');
->>>>>>> main
   }
 }

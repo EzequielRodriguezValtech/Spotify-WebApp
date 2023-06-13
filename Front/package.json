@@ -1,0 +1,19 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "description": "Front Spotify-WebApp",
+  "main": "app.tsx",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EzequielRodriguezValtech/Spotify-WebApp.git"
+  },
+  "author": "Victoria Nadia Gonzalez/Ezequiel Matias Rodriguez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EzequielRodriguezValtech/Spotify-WebApp/issues"
+  },
+  "homepage": "https://github.com/EzequielRodriguezValtech/Spotify-WebApp#readme"
+}

@@ -53,7 +53,7 @@ export async function GetFavoriteSongs(req: Request, res: Response) {
       // Filtra las canciones que no existen en la base de datos
       const uniqueSongs = songData.filter((song: { name: string }) => {
         return !existingSongs.find(
-          (existingSong) => existingSong.name === song.name
+          (existingSong: { name: string; }) => existingSong.name === song.name
         );
       });
       console.log(uniqueSongs);

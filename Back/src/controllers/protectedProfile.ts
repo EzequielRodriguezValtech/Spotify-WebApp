@@ -1,18 +1,13 @@
 import { Request, Response } from 'express';
 import { Profile } from 'passport-spotify';
+import { User } from '@prisma/client';
 
-type SpotifyUser = {
-  profile: Profile;
-  accessToken: string;
-  refreshToken: string;
-};
 
 export async function GetProtectedProfile(req: Request, res: Response) {
   if (req.user) {
-    const user = req.user as SpotifyUser;
-    const { profile, accessToken, refreshToken } = user;
+    const user = req.user as User;
     res.send(
-      `Welcome, ${profile.displayName}!<br>Access Token: ${accessToken}<br>Refresh Token: ${refreshToken}`
+      `Welcome, ${user.spotifyId}!<br>Access Token: ${user.accessToken}<br>Refresh Token: ${user.refreshToken}`
     );
   } else {
     res.redirect('/auth/spotify');

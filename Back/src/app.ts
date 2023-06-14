@@ -4,16 +4,17 @@ import { Strategy as SpotifyStrategy } from 'passport-spotify';
 import session from 'express-session';
 import * as path from 'path';
 import spotifyRouter from './routes/routes';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
+
 import {
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
   SPOTIFY_CALLBACK_URL,
 } from './config/config';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(); 
 
-// Configuración de Passport1
+
 passport.use(
   new SpotifyStrategy(
     {
@@ -23,40 +24,49 @@ passport.use(
       scope: ['user-top-read', 'user-read-email', 'user-read-private'],
       showDialog: true,
     },
-    async (accessToken: any, refreshToken: any, expires_in: any, profile: any, done: (arg0: null, arg1: { profile: any; accessToken: any; refreshToken: any; expires_in: any; }) => any) => {
-      const user = { profile, accessToken, refreshToken, expires_in };
-      return done(null, user);
-      // try {
-      //   const user = await prisma.user.findUnique({
-      //     where: { spotifyId: profile.id },
-      //   });
-      //   const primaryEmail =
-      //     profile.emails && profile.emails.length > 0
-      //       ? profile.emails[0].value
-      //       : '';
-      //   const expirationDate = new Date();
-      //   expirationDate.setSeconds(expirationDate.getSeconds() + expires_in);
-      //   if (user) {
-      //     return done(null, user);
-      //   } else {
-      //     const newUser = await prisma.user.create({
-      //       data: {
-      //         spotifyId: profile.id,
-      //         name: profile.displayName,
-      //         email: primaryEmail,
-      //         expiresAt: expirationDate,
-      //         accessToken: accessToken,
-      //         refreshToken: refreshToken,
-      //       },
-      //     });
-      //     return done(null, newUser);
-      //   }
-      // } catch (error) {
-      //   // return done(error)
-      // }
+    async (
+      accessToken: string,
+      refreshToken: string,
+      expires_in: number,
+      profile: any,
+      done: (error: any, user?: any) => void
+    ) => {
+      try {
+        const user = await prisma.user.findUnique({
+          where: { spotifyId: profile.id },
+        });
+
+        const primaryEmail =
+          profile.emails && profile.emails.length > 0
+            ? profile.emails[0].value
+            : '';
+
+        const expirationDate = new Date();
+        expirationDate.setSeconds(expirationDate.getSeconds() + expires_in);
+
+        if (user) {
+          done(null, user);
+        } else {
+          const newUser = await prisma.user.create({
+            data: {
+              spotifyId: profile.id,
+              name: profile.displayName,
+              email: primaryEmail,
+              expiresAt: expirationDate,
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            },
+          });
+          done(null, newUser);
+        }
+      } catch (error) {
+        done(error);
+      }
     }
   )
 );
+
+
 
 passport.authenticate('spotify', { failureRedirect: '/auth/spotify' });
 

@@ -1,17 +1,9 @@
-<<<<<<< HEAD
-import express from 'express';
-=======
 import express, { NextFunction, Request, Response } from 'express';
->>>>>>> main
 import { GetFavoriteSongs } from '../controllers/favouriteSongsController';
 import { GetProtectedProfile } from '../controllers/protectedProfile';
 import { AuthProfile } from '../controllers/passportAuth';
 import { Welcome } from '../controllers/serverWelcome';
-<<<<<<< HEAD
-import passport from 'passport';
-=======
 import passport, { session } from 'passport';
->>>>>>> main
 
 const spotifyRouter = express.Router();
 
@@ -34,9 +26,6 @@ spotifyRouter.get('/profile', GetProtectedProfile);
 // Ruta de canciones favoritas protegida
 spotifyRouter.get('/favorites', GetFavoriteSongs);
 
-<<<<<<< HEAD
-export default spotifyRouter;
-=======
 //Ruta deslogeo
 spotifyRouter.get('/logout', (req: Request, res: Response) => {
   req.session.destroy(session);
@@ -44,4 +33,3 @@ spotifyRouter.get('/logout', (req: Request, res: Response) => {
 });
 
 export default spotifyRouter;
->>>>>>> main

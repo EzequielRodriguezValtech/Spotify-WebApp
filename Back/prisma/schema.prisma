@@ -11,13 +11,6 @@ generator client {
 }
 
 model Song {
-<<<<<<< HEAD
-  id         Int    @id @default(autoincrement())
-  name       String
-  artist     String
-  duration   Int
-  album      String
-=======
   id       Int    @id @default(autoincrement())
   name     String
   artist   String
@@ -36,5 +29,4 @@ model User {
   refreshToken String
   expiresAt    DateTime
   Songs        Song[]
->>>>>>> main
 }

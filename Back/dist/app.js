@@ -78,10 +78,45 @@ passport_1.default.use(new passport_spotify_1.Strategy({
     scope: ['user-top-read', 'user-read-email', 'user-read-private'],
     showDialog: true,
 }, function (accessToken, refreshToken, expires_in, profile, done) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
+    var user, primaryEmail, expirationDate, newUser, error_1;
     return __generator(this, function (_a) {
-        user = { profile: profile, accessToken: accessToken, refreshToken: refreshToken, expires_in: expires_in };
-        return [2, done(null, user)];
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                return [4, prisma.user.findUnique({
+                        where: { spotifyId: profile.id },
+                    })];
+            case 1:
+                user = _a.sent();
+                primaryEmail = profile.emails && profile.emails.length > 0
+                    ? profile.emails[0].value
+                    : '';
+                expirationDate = new Date();
+                expirationDate.setSeconds(expirationDate.getSeconds() + expires_in);
+                if (!user) return [3, 2];
+                done(null, user);
+                return [3, 4];
+            case 2: return [4, prisma.user.create({
+                    data: {
+                        spotifyId: profile.id,
+                        name: profile.displayName,
+                        email: primaryEmail,
+                        expiresAt: expirationDate,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                    },
+                })];
+            case 3:
+                newUser = _a.sent();
+                done(null, newUser);
+                _a.label = 4;
+            case 4: return [3, 6];
+            case 5:
+                error_1 = _a.sent();
+                done(error_1);
+                return [3, 6];
+            case 6: return [2];
+        }
     });
 }); }));
 passport_1.default.authenticate('spotify', { failureRedirect: '/auth/spotify' });

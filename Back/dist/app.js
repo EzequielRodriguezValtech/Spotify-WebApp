@@ -142,7 +142,7 @@ app.use((0, express_session_1.default)({
     saveUninitialized: true,
 }));
 app.use(express_1.default.static(path.join(__dirname, '..', 'front', 'public')));
-app.set('views', path.join(__dirname, 'front/views'));
+app.set('views', path.join(__dirname, '..', 'front', 'views'));
 app.set('view engine', 'ejs');
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());

@@ -102,7 +102,7 @@ app.use(
 app.use(express.static(path.join(__dirname, '..', 'front', 'public')));
 
 // Configurar la ubicación de las vistas
-app.set('views', path.join(__dirname, 'front/views'));
+app.set('views', path.join(__dirname, '..', 'front', 'views'));
 
 // Configurar el motor de plantillas
 app.set('view engine', 'ejs');

@@ -82,7 +82,7 @@ passport_1.default.use(new passport_spotify_1.Strategy({
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 5, , 6]);
+                _a.trys.push([0, 6, , 7]);
                 return [4, prisma.user.findUnique({
                         where: { spotifyId: profile.id },
                     })];
@@ -93,10 +93,19 @@ passport_1.default.use(new passport_spotify_1.Strategy({
                     : '';
                 expirationDate = new Date();
                 expirationDate.setSeconds(expirationDate.getSeconds() + expires_in);
-                if (!user) return [3, 2];
+                if (!user) return [3, 3];
+                return [4, prisma.user.update({
+                        where: { id: user.id },
+                        data: {
+                            accessToken: accessToken,
+                            expiresAt: expirationDate,
+                        },
+                    })];
+            case 2:
+                _a.sent();
                 done(null, user);
-                return [3, 4];
-            case 2: return [4, prisma.user.create({
+                return [3, 5];
+            case 3: return [4, prisma.user.create({
                     data: {
                         spotifyId: profile.id,
                         name: profile.displayName,
@@ -106,16 +115,16 @@ passport_1.default.use(new passport_spotify_1.Strategy({
                         refreshToken: refreshToken,
                     },
                 })];
-            case 3:
+            case 4:
                 newUser = _a.sent();
                 done(null, newUser);
-                _a.label = 4;
-            case 4: return [3, 6];
-            case 5:
+                _a.label = 5;
+            case 5: return [3, 7];
+            case 6:
                 error_1 = _a.sent();
                 done(error_1);
-                return [3, 6];
-            case 6: return [2];
+                return [3, 7];
+            case 7: return [2];
         }
     });
 }); }));

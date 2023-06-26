@@ -119,7 +119,7 @@ app.use('/favorites', spotifyRouter);
 app.use('/logout', spotifyRouter);
 
 // Puerto de escucha
-const port = 3000;
+const port = 8000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

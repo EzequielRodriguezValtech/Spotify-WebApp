@@ -1,21 +1,21 @@
-import axios from 'axios';
-import { Request, Response } from 'express';
-import { PrismaClient, Song, User } from '@prisma/client';
-import ejs from 'ejs';
-
+import axios from "axios";
+import { Request, Response } from "express";
+import { PrismaClient, Song, User } from "@prisma/client";
+import ejs from "ejs";
 
 const prisma = new PrismaClient();
 
 export async function GetFavoriteSongs(req: Request, res: Response) {
   if (req.user) {
     const user = req.user as User;
+    const accessToken = user.accessToken;
 
     try {
       const response = await axios.get(
         'https://api.spotify.com/v1/me/top/tracks',
         {
           headers: {
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           params: {
             limit: 5, // Obtén las 5 canciones principales
@@ -30,7 +30,8 @@ export async function GetFavoriteSongs(req: Request, res: Response) {
           artist: item.artists[0]?.name || '',
           duration: item.duration_ms || 0,
           album: item.album.name,
-          userId: user.id, // Asignar el ID del usuario actual a cada canción
+          userId: user.id,
+          // albumImage: item.album.images[0]?.url || '',
         };
       });
 
@@ -38,8 +39,12 @@ export async function GetFavoriteSongs(req: Request, res: Response) {
       const existingSongs = await prisma.song.findMany({
         where: {
           name: { in: songData.map((song: { name: string }) => song.name) },
+          artist: { in: songData.map((song: {artist: string}) => song.artist)}
         },
       });
+
+      // PRUEBA SONGS DATABASE
+      const songsDB = await prisma.song.findMany();
 
       // Filtra las canciones que no existen en la base de datos
       const uniqueSongs = songData.filter((song: { name: string }) => {
@@ -47,30 +52,35 @@ export async function GetFavoriteSongs(req: Request, res: Response) {
           (existingSong: { name: string; }) => existingSong.name === song.name
         );
       });
+      console.log(uniqueSongs);
 
       // Guarda las canciones únicas en la base de datos
       const createdSongs = await prisma.song.createMany({
         data: uniqueSongs,
       });
-
       console.log('Canciones creadas:', createdSongs);
+      
 
-      // Obtén las 5 canciones principales del usuario para enviar en la respuesta
-      const topSongs: Song[] = await prisma.song.findMany({
-        where: {
-          userId: user.id,
-        },
-        take: 5,
-      });
+      // Obtén las 5 canciones principales para enviar en la respuesta
+      const topSongs: Song[] = songsDB;
 
       if (topSongs.length !== 0) {
-        const renderedHtml = await ejs.renderFile(
+        ejs.renderFile(
           __dirname + '/../../front/views/favorites.ejs',
-          { songs: topSongs }
+          { songs: topSongs },
+          (err, html) => {
+            if (err) {
+              console.error(
+                'Error al renderizar el archivo favorites.ejs',
+                err
+              );
+            } else {
+              res.send(html);
+            }
+          }
         );
-        res.send(renderedHtml);
       } else {
-        res.redirect('/favorites');
+        res.redirect("/favorites")
       }
     } catch (error) {
       console.error('Error al obtener las canciones principales:', error);

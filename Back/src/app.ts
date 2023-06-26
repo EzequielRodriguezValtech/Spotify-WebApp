@@ -1,10 +1,10 @@
 import express from 'express';
-import passport, { use } from 'passport';
+import passport from 'passport';
 import { Strategy as SpotifyStrategy } from 'passport-spotify';
 import session from 'express-session';
 import * as path from 'path';
 import spotifyRouter from './routes/routes';
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 import {
   SPOTIFY_CLIENT_ID,
@@ -45,6 +45,15 @@ passport.use(
         expirationDate.setSeconds(expirationDate.getSeconds() + expires_in);
 
         if (user) {
+          // Actualizar el token de acceso y la fecha de vencimiento en la base de datos
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { 
+              accessToken: accessToken,
+              expiresAt: expirationDate,
+            },
+          });
+
           done(null, user);
         } else {
           const newUser = await prisma.user.create({
@@ -65,7 +74,6 @@ passport.use(
     }
   )
 );
-
 
 
 passport.authenticate('spotify', { failureRedirect: '/auth/spotify' });

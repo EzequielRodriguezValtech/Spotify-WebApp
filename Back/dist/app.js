@@ -152,7 +152,7 @@ app.use('/auth/spotify/callback', routes_1.default);
 app.use('/profile', routes_1.default);
 app.use('/favorites', routes_1.default);
 app.use('/logout', routes_1.default);
-var port = 3000;
+var port = 8000;
 app.listen(port, function () {
     console.log("Server listening on port ".concat(port));
 });

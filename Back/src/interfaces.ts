@@ -6,3 +6,7 @@ interface Song {
     album: string;
     albumImage: string;
   }
+
+interface User {
+  
+}

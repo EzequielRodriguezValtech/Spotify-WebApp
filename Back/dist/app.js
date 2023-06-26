@@ -69,13 +69,15 @@ var express_session_1 = __importDefault(require("express-session"));
 var path = __importStar(require("path"));
 var routes_1 = __importDefault(require("./routes/routes"));
 var client_1 = require("@prisma/client");
+var cors_1 = require("./cors");
+var cors_2 = __importDefault(require("cors"));
 var config_1 = require("./config/config");
 var prisma = new client_1.PrismaClient();
 passport_1.default.use(new passport_spotify_1.Strategy({
     clientID: config_1.SPOTIFY_CLIENT_ID,
     clientSecret: config_1.SPOTIFY_CLIENT_SECRET,
     callbackURL: config_1.SPOTIFY_CALLBACK_URL,
-    scope: ['user-top-read', 'user-read-email', 'user-read-private'],
+    scope: ["user-top-read", "user-read-email", "user-read-private"],
     showDialog: true,
 }, function (accessToken, refreshToken, expires_in, profile, done) { return __awaiter(void 0, void 0, void 0, function () {
     var user, primaryEmail, expirationDate, newUser, error_1;
@@ -90,7 +92,7 @@ passport_1.default.use(new passport_spotify_1.Strategy({
                 user = _a.sent();
                 primaryEmail = profile.emails && profile.emails.length > 0
                     ? profile.emails[0].value
-                    : '';
+                    : "";
                 expirationDate = new Date();
                 expirationDate.setSeconds(expirationDate.getSeconds() + expires_in);
                 if (!user) return [3, 3];
@@ -128,7 +130,7 @@ passport_1.default.use(new passport_spotify_1.Strategy({
         }
     });
 }); }));
-passport_1.default.authenticate('spotify', { failureRedirect: '/auth/spotify' });
+passport_1.default.authenticate("spotify", { failureRedirect: "/auth/spotify" });
 passport_1.default.serializeUser(function (user, done) {
     done(null, user);
 });
@@ -141,17 +143,18 @@ app.use((0, express_session_1.default)({
     resave: true,
     saveUninitialized: true,
 }));
-app.use(express_1.default.static(path.join(__dirname, '..', 'front', 'public')));
-app.set('views', path.join(__dirname, 'front/views'));
-app.set('view engine', 'ejs');
+app.use((0, cors_2.default)(cors_1.corsOptionsWithExpress));
+app.use(express_1.default.static(path.join(__dirname, "..", "front", "public")));
+app.set("views", path.join(__dirname, "front/views"));
+app.set("view engine", "ejs");
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
-app.use('/', routes_1.default);
-app.use('/auth/spotify', routes_1.default);
-app.use('/auth/spotify/callback', routes_1.default);
-app.use('/profile', routes_1.default);
-app.use('/favorites', routes_1.default);
-app.use('/logout', routes_1.default);
+app.use("/", routes_1.default);
+app.use("/auth/spotify", routes_1.default);
+app.use("/auth/spotify/callback", routes_1.default);
+app.use("/profile", routes_1.default);
+app.use("/favorites", routes_1.default);
+app.use("/logout", routes_1.default);
 var port = 8000;
 app.listen(port, function () {
     console.log("Server listening on port ".concat(port));

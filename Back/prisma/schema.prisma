@@ -11,7 +11,7 @@ generator client {
 }
 
 model Song {
-  id       Int    @id @default(autoincrement())
+  id       String   @id @unique
   name     String
   artist   String
   duration Int

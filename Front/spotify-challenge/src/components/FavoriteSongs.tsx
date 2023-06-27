@@ -1,43 +1,52 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+interface Song {
+  id: number;
+  name: string;
+  artist: string;
+  duration: number;
+  album: string;
+  albumImage: string;
+}
+
 const FavoriteSongs = () => {
-  // Definir el estado local para almacenar las canciones favoritas
-  const [favoriteSongs, setFavoriteSongs] = useState([]);
+  const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    // Función asincrónica para obtener las canciones favoritas
     const getFavoriteSongs = async () => {
       try {
-        // Realizar la solicitud GET al endpoint '/favorites'
-        const response = await axios.get('/favorites');
-
-        // Actualizar el estado con los datos de las canciones favoritas recibidas en la respuesta
+        const response = await axios.get('http://localhost:8000/favorites', {
+          withCredentials: true
+        });
         setFavoriteSongs(response.data);
-      } catch (error) {
-        // Manejar cualquier error que ocurra durante la solicitud
-        console.error('Error al obtener las canciones favoritas:', error);
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error || 'Error al obtener las canciones favoritas';
+        setError(errorMessage);
       }
     };
 
-    // Llamar a la función para obtener las canciones favoritas cuando el componente se monta
     getFavoriteSongs();
-  }, []); // El array vacío [] asegura que este efecto solo se ejecute una vez, al montar el componente
+  }, []);
 
   return (
     <div>
       <h1>My Favorite Songs</h1>
-      <ul>
-        {/* Mapear las canciones favoritas y mostrar los detalles */}
-        {favoriteSongs.map((song: any) => (
-          <li key={song.name}>
-            <h2>{song.name}</h2>
-            <p>by {song.artist}</p>
-            <p>Duration: {song.duration}</p>
-            <p>Album: {song.album}</p>
-          </li>
-        ))}
-      </ul>
+      {error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <ul>
+          {favoriteSongs.map((song: Song) => (
+            <li key={song.id}>
+              <h2>{song.name}</h2>
+              <p>by {song.artist}</p>
+              <p>Duration: {song.duration}</p>
+              <p>Album: {song.album}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

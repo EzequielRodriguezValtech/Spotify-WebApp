@@ -5,14 +5,12 @@ import session from "express-session";
 import * as path from "path";
 import spotifyRouter from "./routes/routes";
 import { PrismaClient } from "@prisma/client";
-import { corsOptionsWithExpress } from "./cors";
 import cors from "cors";
 import {
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
   SPOTIFY_CALLBACK_URL,
 } from "./config/config";
-
 
 const prisma = new PrismaClient();
 
@@ -67,7 +65,14 @@ passport.use(
               refreshToken: refreshToken,
             },
           });
-          done(null, newUser);
+
+          const client_id = SPOTIFY_CLIENT_ID;
+          const redirect_uri = encodeURIComponent(SPOTIFY_CALLBACK_URL);
+          const scopes = 'user-read-private user-read-email';
+
+          const authorizationUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${redirect_uri}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
+
+          done(null, { user: newUser, authorizationUrl });
         }
       } catch (error) {
         done(error);
@@ -92,6 +97,17 @@ passport.deserializeUser<any, any>(
 
 // Configuración de Express
 const app = express();
+
+// Configurar CORS con opciones personalizadas
+const corsOptions: cors.CorsOptions = {
+  origin: "http://localhost:3000", // Especifica el origen permitido
+  methods: "GET, POST, PUT, DELETE", // Especifica los métodos permitidos
+  allowedHeaders: ["Content-Type, Authorization"], // Especifica los encabezados permitidos
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.use(
   session({
     secret: SPOTIFY_CLIENT_SECRET,
@@ -100,8 +116,7 @@ app.use(
   })
 );
 
-//Configure cors
-app.use(cors(corsOptionsWithExpress));
+
 
 // Configurar la carpeta estática
 app.use(express.static(path.join(__dirname, "..", "front", "public")));
@@ -122,6 +137,11 @@ app.use("/auth/spotify/callback", spotifyRouter);
 app.use("/profile", spotifyRouter);
 app.use("/favorites", spotifyRouter);
 app.use("/logout", spotifyRouter);
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 // Puerto de escucha
 const port = 8000;

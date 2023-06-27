@@ -1,11 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
 interface User {
     spotifyId: string;
     email: string;
-    // Otros campos del usuario
+    name: string;
+    accesToken: string;
+    refreshToken: string;
+    Songs: Song[]
   }
+ 
+  
+interface Song {
+  id: number;
+  name: string;
+  artist: string;
+  duration: number;
+  album: string;
+  albumImage: string;
+}
 
 const MyProfile = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -13,8 +27,10 @@ const MyProfile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/profile');
-        const userData = response.data;
+        const response = await axios.get<{ user: User }>('http://localhost:8000/profile', {
+          withCredentials: true,
+        });
+        const userData = response.data.user;
         setUser(userData);
       } catch (error) {
         console.error('Error al obtener la información del usuario:', error);
@@ -36,7 +52,7 @@ const MyProfile = () => {
             <hr />
             <ul>
               <li>Email: {user.email}</li>
-              {/* Otros detalles del usuario */}
+              <li>Name: {user.name}</li>
             </ul>
             <h4>
               <a href="/favorites">Check your top 5 tracks</a>

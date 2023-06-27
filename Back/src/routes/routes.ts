@@ -1,9 +1,10 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, {  Request, Response } from 'express';
 import { GetFavoriteSongs } from '../controllers/favouriteSongsController';
 import { GetProtectedProfile } from '../controllers/protectedProfile';
-import { AuthProfile } from '../controllers/passportAuth';
 import { Welcome } from '../controllers/serverWelcome';
 import passport, { session } from 'passport';
+import { SPOTIFY_CALLBACK_URL, SPOTIFY_CLIENT_ID } from '../config/config';
+
 
 const spotifyRouter = express.Router();
 
@@ -11,13 +12,20 @@ const spotifyRouter = express.Router();
 spotifyRouter.get('/', Welcome);
 
 // Ruta de inicio de sesión de Spotify
-spotifyRouter.get('/auth/spotify', passport.authenticate('spotify'));
+// spotifyRouter.get('/auth/spotify', passport.authenticate('spotify'));        
+spotifyRouter.get('/auth/spotify', async (req: Request, res: Response) => {
+  const client_id = SPOTIFY_CLIENT_ID;
+  const redirect_uri = 'http://localhost:8000/auth/spotify/callback';
+  const scopes = 'user-read-private user-read-email';
+
+  const authorizationUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=token&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
+  res.redirect(authorizationUrl);
+});
 
 // Ruta de redireccionamiento de Spotify después de la autenticación
 spotifyRouter.get(
   '/auth/spotify/callback',
-  passport.authenticate('spotify'),
-  AuthProfile
+  passport.authenticate('spotify', { successRedirect: 'http://localhost:3000/profile', failureRedirect: '/error' }),
 );
 
 // Ruta de perfil protegida
@@ -33,3 +41,7 @@ spotifyRouter.get('/logout', (req: Request, res: Response) => {
 });
 
 export default spotifyRouter;
+function done(arg0: null, arg1: { authorizationUrl: string; }) {
+  throw new Error('Function not implemented.');
+}
+

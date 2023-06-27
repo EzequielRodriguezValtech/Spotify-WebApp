@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
 interface User {
-  spotifyId: string;
-  email: string;
-  // Otros campos del usuario
+    spotifyId: string;
+    email: string;
+    name: string;
+    accesToken: string;
+    refreshToken: string;
+    Songs: Song[]
+  }
+ 
+  
+interface Song {
+  id: number;
+  name: string;
+  artist: string;
+  duration: number;
+  album: string;
+  albumImage: string;
 }
 
 const MyProfile = () => {
@@ -20,7 +34,6 @@ const MyProfile = () => {
         withCredentials: true,
       });
       const userData = response.data;
-      console.log(userData);
       setUser(userData);
     } catch (error) {
       console.error('Error al obtener la información del usuario:', error);
@@ -38,8 +51,8 @@ const MyProfile = () => {
             <h2>Welcome again, {user!.spotifyId}!</h2>
             <hr />
             <ul>
-              <li>Email: {user!.email}</li>
-              {/* Otros detalles del usuario */}
+              <li>Email: {user.email}</li>
+              <li>Name: {user.name}</li>
             </ul>
             <h4>
               <a href="/favorites">Check your top 5 tracks</a>

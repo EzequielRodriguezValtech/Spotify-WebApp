@@ -4,7 +4,7 @@ import { User } from '@prisma/client';
 export async function GetProtectedProfile(req: Request, res: Response) {
   if (req.user) {
     const user = req.user as User;
-    res.json(user);
+    res.json({ user });
   } else {
     res.redirect('/auth/spotify');
   }

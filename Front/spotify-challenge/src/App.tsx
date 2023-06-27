@@ -1,33 +1,21 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import FavoriteSongs from './components/FavoriteSongs';
-import Profile from './pages/profile';
-import SpotifyLogin from './pages/spotifyLogin';
+import MyProfile from './pages/profile';
+import WelcomeMessage from './components/WelcomeMessage';
+import SpotifyLogin from './components/SpotifyLogin';
+import SpotifyCallback from './components/SpotifyCallback';
 
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="App">
-        <nav>
-          <ul>
-            <li>
-              <Link to="/auth/spotify">Login</Link>
-            </li>
-            <li>
-              <Link to="/favorites">Favorite Songs</Link>
-            </li>
-            <li>
-              <Link to="/profile">My profile </Link>
-            </li>
-          </ul>
-        </nav>
-
         <Routes>
+          <Route path="/" element={<WelcomeMessage /> } />
           <Route path="/auth/spotify" element={<SpotifyLogin />} />
+          <Route path="/auth/spotify/callback" element={<SpotifyCallback />} />
+          <Route path="/profile" element={ <MyProfile />} />
           <Route path="/favorites" element={<FavoriteSongs />} />
-          <Route path="/profile" element={<Profile />} />
         </Routes>
-      </div>
     </Router>
   );
 };

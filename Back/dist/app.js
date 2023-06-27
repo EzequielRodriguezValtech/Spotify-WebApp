@@ -69,8 +69,7 @@ var express_session_1 = __importDefault(require("express-session"));
 var path = __importStar(require("path"));
 var routes_1 = __importDefault(require("./routes/routes"));
 var client_1 = require("@prisma/client");
-var cors_1 = require("./cors");
-var cors_2 = __importDefault(require("cors"));
+var cors_1 = __importDefault(require("cors"));
 var config_1 = require("./config/config");
 var prisma = new client_1.PrismaClient();
 passport_1.default.use(new passport_spotify_1.Strategy({
@@ -80,7 +79,7 @@ passport_1.default.use(new passport_spotify_1.Strategy({
     scope: ["user-top-read", "user-read-email", "user-read-private"],
     showDialog: true,
 }, function (accessToken, refreshToken, expires_in, profile, done) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, primaryEmail, expirationDate, newUser, error_1;
+    var user, primaryEmail, expirationDate, newUser, client_id, redirect_uri, scopes, authorizationUrl, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -119,7 +118,11 @@ passport_1.default.use(new passport_spotify_1.Strategy({
                 })];
             case 4:
                 newUser = _a.sent();
-                done(null, newUser);
+                client_id = config_1.SPOTIFY_CLIENT_ID;
+                redirect_uri = encodeURIComponent(config_1.SPOTIFY_CALLBACK_URL);
+                scopes = 'user-read-private user-read-email';
+                authorizationUrl = "https://accounts.spotify.com/authorize?client_id=".concat(client_id, "&response_type=code&redirect_uri=").concat(redirect_uri, "&scope=").concat(encodeURIComponent(scopes), "&show_dialog=true");
+                done(null, { user: newUser, authorizationUrl: authorizationUrl });
                 _a.label = 5;
             case 5: return [3, 7];
             case 6:
@@ -138,12 +141,18 @@ passport_1.default.deserializeUser(function (user, done) {
     done(null, user);
 });
 var app = (0, express_1.default)();
+var corsOptions = {
+    origin: "http://localhost:3000",
+    methods: "GET, POST, PUT, DELETE",
+    allowedHeaders: ["Content-Type, Authorization"],
+    credentials: true,
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use((0, express_session_1.default)({
     secret: config_1.SPOTIFY_CLIENT_SECRET,
     resave: true,
     saveUninitialized: true,
 }));
-app.use((0, cors_2.default)(cors_1.corsOptionsWithExpress));
 app.use(express_1.default.static(path.join(__dirname, "..", "front", "public")));
 app.set("views", path.join(__dirname, "front/views"));
 app.set("view engine", "ejs");
@@ -154,6 +163,10 @@ app.use("/auth/spotify", routes_1.default);
 app.use("/profile", routes_1.default);
 app.use("/favorites", routes_1.default);
 app.use("/logout", routes_1.default);
+app.use(function (req, res, next) {
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    next();
+});
 var port = 8000;
 app.listen(port, function () {
     console.log("Server listening on port ".concat(port));

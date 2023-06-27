@@ -16,8 +16,7 @@ spotifyRouter.get('/auth/spotify', passport.authenticate('spotify'));
 // Ruta de redireccionamiento de Spotify después de la autenticación
 spotifyRouter.get(
   '/auth/spotify/callback',
-  passport.authenticate('spotify'),
-  AuthProfile
+  passport.authenticate('spotify', {successRedirect: 'http://localhost:3000/profile'}),
 );
 
 // Ruta de perfil protegida

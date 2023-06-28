@@ -30,14 +30,15 @@ export async function GetFavoriteSongs(req: Request, res: Response) {
           duration: item.duration_ms || 0,
           album: item.album.name,
           userId: user.id,
+          id: item.id
         };
       });
 
       // Filtra las canciones existentes en la base de datos
+      const songIds = songData.map((song: { id: number }) => song.id);
       const existingSongs = await prisma.song.findMany({
         where: {
-          name: { in: songData.map((song: { name: string }) => song.name) },
-          artist: { in: songData.map((song: { artist: string }) => song.artist) },
+          id: { in: songIds },
         },
       });
 

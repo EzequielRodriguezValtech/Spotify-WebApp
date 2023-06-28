@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import SpotifyHeader from './spotifyHeader';
 
 interface Song {
   id: number;
@@ -11,7 +10,7 @@ interface Song {
   albumImage: string;
 }
 
-const FavoriteSongs = () => {
+const FavoriteSongsList = () => {
   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -34,27 +33,24 @@ const FavoriteSongs = () => {
   }, []);
 
   return (
-    <>
-      <SpotifyHeader />
-      <div>
-        <h1>My Favorite Songs</h1>
-        {error ? (
-          <p>Error: {error}</p>
-        ) : (
-          <ul>
-            {favoriteSongs.map((song: Song) => (
-              <li key={song.id}>
-                <h2>{song.name}</h2>
-                <p>by {song.artist}</p>
-                <p>Duration: {song.duration}</p>
-                <p>Album: {song.album}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
+    <div>
+      <h1>My Favorite Songs</h1>
+      {error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <ul>
+          {favoriteSongs.map((song: Song) => (
+            <li key={song.id}>
+              <h2>{song.name}</h2>
+              <p>by {song.artist}</p>
+              <p>Duration: {song.duration}</p>
+              <p>Album: {song.album}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 };
 
-export default FavoriteSongs;
+export default FavoriteSongsList;

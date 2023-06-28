@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import FavoriteSongs from './components/FavoriteSongs';
-import MyProfile from './pages/profile';
+import FavoriteSongs from './pages/favoriteSongs';
 import WelcomeMessage from './components/WelcomeMessage';
 import SpotifyLogin from './components/SpotifyLogin';
 import SpotifyCallback from './components/SpotifyCallback';
+import Profile from './pages/profile';
 
 const App: React.FC = () => {
   return (
@@ -13,7 +13,7 @@ const App: React.FC = () => {
           <Route path="/" element={<WelcomeMessage /> } />
           <Route path="/auth/spotify" element={<SpotifyLogin />} />
           <Route path="/auth/spotify/callback" element={<SpotifyCallback />} />
-          <Route path="/profile" element={ <MyProfile />} />
+          <Route path="/profile" element={ <Profile />} />
           <Route path="/favorites" element={<FavoriteSongs />} />
         </Routes>
     </Router>

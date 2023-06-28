@@ -1,9 +1,13 @@
-import MyProfile from "../components/MyProfile";
-
+import MyProfile from '../components/myProfile';
+import 'tailwindcss/tailwind.css';
+import SpotifyHeader from '../components/spotifyHeader';
 
 const Profile = () => {
   return (
-    <MyProfile />
+      <>
+      <SpotifyHeader />
+      <MyProfile />
+      </>
   );
 };
 

@@ -18,7 +18,7 @@ spotifyRouter.get('/auth/spotify', async (req: Request, res: Response) => {
   const redirect_uri = 'http://localhost:8000/auth/spotify/callback';
   const scopes = 'user-read-private user-read-email';
 
-  const authorizationUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=token&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
+  const authorizationUrl = `http://localhost:8000/auth/spotify/callback`;
   res.redirect(authorizationUrl);
 });
 

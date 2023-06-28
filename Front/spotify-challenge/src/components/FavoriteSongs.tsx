@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import SpotifyHeader from './spotifyHeader';
 
 interface Song {
   id: number;
@@ -18,11 +19,13 @@ const FavoriteSongs = () => {
     const getFavoriteSongs = async () => {
       try {
         const response = await axios.get('http://localhost:8000/favorites', {
-          withCredentials: true
+          withCredentials: true,
         });
         setFavoriteSongs(response.data);
       } catch (error: any) {
-        const errorMessage = error.response?.data?.error || 'Error al obtener las canciones favoritas';
+        const errorMessage =
+          error.response?.data?.error ||
+          'Error al obtener las canciones favoritas';
         setError(errorMessage);
       }
     };
@@ -31,23 +34,26 @@ const FavoriteSongs = () => {
   }, []);
 
   return (
-    <div>
-      <h1>My Favorite Songs</h1>
-      {error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <ul>
-          {favoriteSongs.map((song: Song) => (
-            <li key={song.id}>
-              <h2>{song.name}</h2>
-              <p>by {song.artist}</p>
-              <p>Duration: {song.duration}</p>
-              <p>Album: {song.album}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <>
+      <SpotifyHeader />
+      <div>
+        <h1>My Favorite Songs</h1>
+        {error ? (
+          <p>Error: {error}</p>
+        ) : (
+          <ul>
+            {favoriteSongs.map((song: Song) => (
+              <li key={song.id}>
+                <h2>{song.name}</h2>
+                <p>by {song.artist}</p>
+                <p>Duration: {song.duration}</p>
+                <p>Album: {song.album}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 };
 

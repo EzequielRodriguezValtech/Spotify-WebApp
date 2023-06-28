@@ -1,13 +1,22 @@
 import { Request, Response } from "express";
 import { PrismaClient, Song, User } from "@prisma/client";
 import axios from "axios";
+import { format } from "date-fns";
 
 const prisma = new PrismaClient();
+
+function formatDuration(duration: number): string {
+  const formattedDuration = format(duration, 'HH:mm:ss');
+  return formattedDuration;
+}
+
 
 export async function GetFavoriteSongs(req: Request, res: Response) {
   if (req.user) {
     const user = req.user as User;
     const accessToken = user.accessToken;
+
+    
 
     try {
       const response = await axios.get<any>(
@@ -23,6 +32,8 @@ export async function GetFavoriteSongs(req: Request, res: Response) {
       );
 
       const { items } = response.data;
+
+      
       const songData = items.map((item: any) => {
         return {
           name: item.name,

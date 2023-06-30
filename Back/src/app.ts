@@ -113,7 +113,8 @@ app.use(
     secret: SPOTIFY_CLIENT_SECRET,
     resave: true,
     saveUninitialized: true,
-  })
+  }),
+  express.json()
 );
 
 
@@ -136,6 +137,9 @@ app.use("/auth/spotify", spotifyRouter);
 app.use("/auth/spotify/callback", spotifyRouter);
 app.use("/profile", spotifyRouter);
 app.use("/favorites", spotifyRouter);
+app.use("/recommendations", spotifyRouter)
+app.post("/playlist/add", spotifyRouter)
+app.post("/playlist/create", spotifyRouter)
 app.use("/logout", spotifyRouter);
 
 app.use((req, res, next) => {

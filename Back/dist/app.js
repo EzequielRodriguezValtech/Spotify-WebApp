@@ -152,7 +152,7 @@ app.use((0, express_session_1.default)({
     secret: config_1.SPOTIFY_CLIENT_SECRET,
     resave: true,
     saveUninitialized: true,
-}));
+}), express_1.default.json());
 app.use(express_1.default.static(path.join(__dirname, "..", "front", "public")));
 app.set("views", path.join(__dirname, "front/views"));
 app.set("view engine", "ejs");
@@ -163,6 +163,9 @@ app.use("/auth/spotify", routes_1.default);
 app.use("/auth/spotify/callback", routes_1.default);
 app.use("/profile", routes_1.default);
 app.use("/favorites", routes_1.default);
+app.use("/recommendations", routes_1.default);
+app.post("/playlist/add", routes_1.default);
+app.post("/playlist/create", routes_1.default);
 app.use("/logout", routes_1.default);
 app.use(function (req, res, next) {
     res.setHeader("Access-Control-Allow-Credentials", "true");

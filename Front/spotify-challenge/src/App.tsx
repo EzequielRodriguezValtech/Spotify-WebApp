@@ -5,6 +5,7 @@ import WelcomeMessage from './components/WelcomeMessage';
 import SpotifyLogin from './components/SpotifyLogin';
 import SpotifyCallback from './components/SpotifyCallback';
 import Profile from './pages/profile';
+import RecommendedSongs from './components/RecommendedSongs';
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: React.FC = () => {
           <Route path="/auth/spotify/callback" element={<SpotifyCallback />} />
           <Route path="/profile" element={ <Profile />} />
           <Route path="/favorites" element={<FavoriteSongs />} />
+          <Route path="/recommendations" element={< RecommendedSongs />} />
         </Routes>
     </Router>
   );

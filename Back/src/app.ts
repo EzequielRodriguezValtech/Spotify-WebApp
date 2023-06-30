@@ -1,85 +1,14 @@
 import express from "express";
 import passport from "passport";
-import { Strategy as SpotifyStrategy } from "passport-spotify";
 import session from "express-session";
 import * as path from "path";
 import spotifyRouter from "./routes/routes";
-import { PrismaClient } from "@prisma/client";
 import cors from "cors";
-import {
-  SPOTIFY_CLIENT_ID,
-  SPOTIFY_CLIENT_SECRET,
-  SPOTIFY_CALLBACK_URL,
-} from "./config/config";
+import { spotifyStrategy } from "./Middlewares/SpotifyStrategyMiddlewares/passportStrategy";
+import { SPOTIFY_CLIENT_SECRET } from "./config/config";
 
-const prisma = new PrismaClient();
 
-passport.use(
-  new SpotifyStrategy(
-    {
-      clientID: SPOTIFY_CLIENT_ID,
-      clientSecret: SPOTIFY_CLIENT_SECRET,
-      callbackURL: SPOTIFY_CALLBACK_URL,
-      scope: ["user-top-read", "user-read-email", "user-read-private"],
-      showDialog: true,
-    },
-    async (
-      accessToken: string,
-      refreshToken: string,
-      expires_in: number,
-      profile: any,
-      done: (error: any, user?: any) => void
-    ) => {
-      try {
-        const user = await prisma.user.findUnique({
-          where: { spotifyId: profile.id },
-        });
-
-        const primaryEmail =
-          profile.emails && profile.emails.length > 0
-            ? profile.emails[0].value
-            : "";
-
-        const expirationDate = new Date();
-        expirationDate.setSeconds(expirationDate.getSeconds() + expires_in);
-
-        if (user) {
-          // Actualizar el token de acceso y la fecha de vencimiento en la base de datos
-          await prisma.user.update({
-            where: { id: user.id },
-            data: {
-              accessToken: accessToken,
-              expiresAt: expirationDate,
-            },
-          });
-
-          done(null, user);
-        } else {
-          const newUser = await prisma.user.create({
-            data: {
-              spotifyId: profile.id,
-              name: profile.displayName,
-              email: primaryEmail,
-              expiresAt: expirationDate,
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-            },
-          });
-
-          const client_id = SPOTIFY_CLIENT_ID;
-          const redirect_uri = encodeURIComponent(SPOTIFY_CALLBACK_URL);
-          const scopes = 'user-read-private user-read-email';
-
-          const authorizationUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${redirect_uri}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
-
-          done(null, { user: newUser, authorizationUrl });
-        }
-      } catch (error) {
-        done(error);
-      }
-    }
-  )
-);
+passport.use(spotifyStrategy);
 
 passport.authenticate("spotify", { failureRedirect: "/auth/spotify" });
 
@@ -117,8 +46,6 @@ app.use(
   express.json()
 );
 
-
-
 // Configurar la carpeta estática
 app.use(express.static(path.join(__dirname, "..", "front", "public")));
 
@@ -137,9 +64,9 @@ app.use("/auth/spotify", spotifyRouter);
 app.use("/auth/spotify/callback", spotifyRouter);
 app.use("/profile", spotifyRouter);
 app.use("/favorites", spotifyRouter);
-app.use("/recommendations", spotifyRouter)
-app.post("/playlist/add", spotifyRouter)
-app.post("/playlist/create", spotifyRouter)
+app.use("/recommendations", spotifyRouter);
+app.post("/playlist/add", spotifyRouter);
+app.post("/playlist/create", spotifyRouter);
 app.use("/logout", spotifyRouter);
 
 app.use((req, res, next) => {

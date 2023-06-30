@@ -5,7 +5,7 @@ import { Welcome } from "../controllers/serverWelcome";
 import passport, { session } from "passport";
 import { sendRecommendationsToClient } from "../controllers/recommendedSongsController";
 import { createPlaylist } from "../controllers/saveRecommendedSongController";
-import { addToPlaylist } from "../controllers/addToPlaylistController";
+
 
 const spotifyRouter = express.Router();
 

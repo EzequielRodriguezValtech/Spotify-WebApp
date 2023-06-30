@@ -4,7 +4,7 @@ import { GetProtectedProfile } from "../controllers/protectedProfile";
 import { Welcome } from "../controllers/serverWelcome";
 import passport, { session } from "passport";
 import { sendRecommendationsToClient } from "../controllers/recommendedSongsController";
-import { createPlaylist } from "../controllers/saveRecommendedSongController";
+import { createPlaylist } from "../controllers/createPlaylistController";
 
 
 const spotifyRouter = express.Router();

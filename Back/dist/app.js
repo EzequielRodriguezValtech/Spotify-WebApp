@@ -66,7 +66,6 @@ app.use("/auth/spotify/callback", routes_1.default);
 app.use("/profile", routes_1.default);
 app.use("/favorites", routes_1.default);
 app.use("/recommendations", routes_1.default);
-app.post("/playlist/add", routes_1.default);
 app.post("/playlist/create", routes_1.default);
 app.use("/logout", routes_1.default);
 app.use(function (req, res, next) {

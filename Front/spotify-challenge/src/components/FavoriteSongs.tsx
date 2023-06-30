@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import '../styles/styles.css';
+
 
 interface Song {
   id: number;
@@ -30,19 +32,32 @@ const FavoriteSongs = () => {
     getFavoriteSongs();
   }, []);
 
+  // Función auxiliar para convertir segundos a formato de minutos y segundos
+ const formatDuration = (duration: number): string => {
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
+
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
   return (
-    <div>
-      <h1>My Favorite Songs</h1>
+    <div className="flex flex-col items-center bg-black text-white py-8">
+      <h1 className="text-3xl md:text-4xl mt-4 mb-8 font-bold text-center">
+        My Favorite Songs
+      </h1>
       {error ? (
-        <p>Error: {error}</p>
+        <p className="text-red-500">{`Error: ${error}`}</p>
       ) : (
-        <ul>
+        <ul className="w-full md:w-2/3">
           {favoriteSongs.map((song: Song) => (
-            <li key={song.id}>
-              <h2>{song.name}</h2>
-              <p>by {song.artist}</p>
-              <p>Duration: {song.duration}</p>
-              <p>Album: {song.album}</p>
+            <li
+              key={song.id}
+              className="mb-4 bg-gray-800 rounded-lg p-4"
+            >
+              <h2 className="text-xl font-bold">{song.name}</h2>
+              <p className="text-gray-400">by {song.artist}</p>
+              <p className="text-gray-400">Duration: {formatDuration(song.duration)}</p>
+              <p className="text-gray-400">Album: {song.album}</p>
             </li>
           ))}
         </ul>

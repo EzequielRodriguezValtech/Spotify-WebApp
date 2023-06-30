@@ -65,7 +65,6 @@ app.use("/auth/spotify/callback", spotifyRouter);
 app.use("/profile", spotifyRouter);
 app.use("/favorites", spotifyRouter);
 app.use("/recommendations", spotifyRouter);
-app.post("/playlist/add", spotifyRouter);
 app.post("/playlist/create", spotifyRouter);
 app.use("/logout", spotifyRouter);
 

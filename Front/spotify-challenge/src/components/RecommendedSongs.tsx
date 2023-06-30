@@ -2,48 +2,31 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 interface Song {
-  uri: any;
+  uri: string;
   name: string;
   artist: string;
   duration: number;
   album: string;
   id: string;
+  isSelected: boolean;
 }
 
-// const RecommendedSongs = () => {
-//   const [recommendedSongs, setRecommendedSongs] = useState<Song[]>([]);
-//   const [error, setError] = useState<string>("");
-
-//   useEffect(() => {
-//     const getRecommendedSongs = async () => {
-//       try {
-//         const response = await axios.get("http://localhost:8000/recommendations", {
-//           withCredentials: true,
-//         });
-//         setRecommendedSongs(response.data);
-//       } catch (error: any) {
-//         const errorMessage = error.response?.data?.error || "Error al obtener las canciones favoritas";
-//         setError(errorMessage);
-//       }
-//     };
-
-//     getRecommendedSongs();
-//   }, []);
-  
- 
-const RecommendedSongs = () => {
+const RecommendedSongs: React.FC = () => {
   const [recommendedSongs, setRecommendedSongs] = useState<Song[]>([]);
   const [error, setError] = useState<string>("");
   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getRecommendedSongs = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/recommendations", {
+        const response = await axios.get<Song[]>("http://localhost:8000/recommendations", {
           withCredentials: true,
         });
-        setRecommendedSongs(response.data);
+        const songsWithSelection = response.data.map((song: Song) => ({
+          ...song,
+          isSelected: false,
+        }));
+        setRecommendedSongs(songsWithSelection);
       } catch (error: any) {
         const errorMessage = error.response?.data?.error || "Error al obtener las canciones favoritas";
         setError(errorMessage);
@@ -53,81 +36,69 @@ const RecommendedSongs = () => {
     getRecommendedSongs();
   }, []);
 
-  const getSelectedSongsUris = (): string[] => {
-    return selectedSongs.map((song) => song.uri);
-  };
-
-  const handleCreatePlaylist = async () => {
-    setIsLoading(true);
-  
-    try {
-      const tracksUri = getSelectedSongsUris();
-      await axios.post(
-        "http://localhost:8000/playlist/create",
-        { tracksUri },
-        {
-          withCredentials: true,
-        }
-      );
-      alert("Playlist creada y canciones agregadas");
-  
-      // Restablecer el estado de las canciones seleccionadas
-      setSelectedSongs([]);
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.error ||
-        "Error al crear la playlist y agregar las canciones";
-      alert(errorMessage);
-    }
-  
-    setIsLoading(false);
-  };
-
   const handleSelectSong = (song: Song) => {
-    setSelectedSongs((prevSelectedSongs) => [...prevSelectedSongs, song]);
+    setSelectedSongs((prevSelectedSongs) => {
+      const isSongSelected = prevSelectedSongs.some((selectedSong) => selectedSong.id === song.id);
+
+      if (isSongSelected) {
+        const updatedSongs = prevSelectedSongs.filter((selectedSong) => selectedSong.id !== song.id);
+        return updatedSongs;
+      } else {
+        const updatedSongs = [...prevSelectedSongs, song];
+        return updatedSongs;
+      }
+    });
   };
-  
+
+  const handleCreatePlaylist = () => {
+    // Lógica para crear una playlist con las canciones seleccionadas
+    console.log("Creando playlist con las siguientes canciones:", selectedSongs);
+  };
 
   return (
-    <div>
-      <h1>We recommend you to hear this!</h1>
+    <div className="flex flex-col items-center bg-gray-900 text-white py-8">
+      <h1 className="text-3xl md:text-4xl mt-4 mb-8 font-bold text-center">
+        We recommend you to hear this!
+      </h1>
       {error ? (
-        <p>Error: {error}</p>
+        <p className="text-red-500">Error: {error}</p>
       ) : (
-        <div>
+        <div className="w-full md:w-2/3">
           <ul>
             {recommendedSongs.map((song) => (
-              <li key={song.id}>
-                <h2>{song.name}</h2>
-                <p>by {song.artist}</p>
-                <p>Duration: {song.duration}</p>
-                <p>Album: {song.album}</p>
-                {selectedSongs.includes(song) ? (
-                  <button disabled>Seleccionada</button>
+              <li key={song.id} className="mb-8">
+                <h2 className="text-xl font-bold">{song.name}</h2>
+                <p className="text-gray-400">by {song.artist}</p>
+                <p className="text-gray-400">Duration: {song.duration}</p>
+                <p className="text-gray-400">Album: {song.album}</p>
+                {selectedSongs.some((selectedSong) => selectedSong.id === song.id) ? (
+                  <button
+                    disabled
+                    className="mt-4 bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded cursor-not-allowed"
+                  >
+                    Selected
+                  </button>
                 ) : (
-                  <button onClick={() => handleSelectSong(song)}>
-                    Seleccionar canción
+                  <button
+                    onClick={() => handleSelectSong(song)}
+                    className="mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Select Song
                   </button>
                 )}
               </li>
             ))}
           </ul>
-          {selectedSongs.length > 0 && (
-            <div>
-              <h2>Selected Songs:</h2>
-              <ul>
-                {selectedSongs.map((song) => (
-                  <li key={song.id}>{song.name}</li>
-                ))}
-              </ul>
-              <button onClick={handleCreatePlaylist}>Create Playlist</button>
-            </div>
-          )}
+          <button
+            onClick={handleCreatePlaylist}
+            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Create Playlist
+          </button>
         </div>
       )}
     </div>
   );
 };
-
 
 export default RecommendedSongs;

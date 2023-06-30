@@ -1,5 +1,6 @@
 import React from 'react';
 import SpotifyHeader from '../components/spotifyHeader';
+import SpotifyFooter from '../components/spotifyFooter';
 
 const SpotifyLogin: React.FC = () => {
   const handleLogin = () => {
@@ -15,6 +16,7 @@ const SpotifyLogin: React.FC = () => {
         <h1>Spotify Login</h1>
         <button onClick={handleLogin}>Login with Spotify</button>
       </div>
+      <SpotifyFooter />
     </>
   );
 };

@@ -1,26 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import spotifyLogo from '../images/Spotify_Logo_RGB_White.png';
 import 'tailwindcss/tailwind.css';
 import '../index.css';
+import axios from 'axios';
+
+interface User {
+  spotifyId: string;
+  email: string;
+  name: string;
+  accesToken: string;
+  refreshToken: string;
+}
 
 const SpotifyHeader: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get<{ user: User }>(
+          'http://localhost:8000/profile',
+          {
+            withCredentials: true,
+          }
+        );
+        const userData = response.data.user;
+        setUser(userData);
+      } catch (error) {
+        console.error('Error al obtener la información del usuario:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
-    <header className="px-2 p-8 h-30 bg-black text-slate-100 flex flex-row items-center flex-wrap ">
-      <div className="basis-8/12 p-5 basis-24 flex items-center">
+    <header className="px-2 p-8 h-40 bg-black text-slate-100 flex items-center">
+      <div className="spotifyLogo p-5 sm:flex justify-center">
         <a href="/">
           <img src={spotifyLogo} alt="Spotify" className="h-16" />
         </a>
       </div>
 
-      <div className="basis-2/12 flex justify-center items-center text-2xl font-bold h-14 hover:text-emerald-600">
-        <a href="https://github.com/EzequielRodriguezValtech/Spotify-WebApp">
-          Documentation
+      <div className="hiddenLinks">
+        <a
+          href="https://github.com/EzequielRodriguezValtech/Spotify-WebApp"
+          className="mx-5 hover:text-emerald-600 transition duration-700"
+        >
+          Documentación
         </a>
-      </div>
-      <hr className="my-2 bg-#0a0a0a" />
 
-      <div className="basis-2/12 flex justify-center items-center text-2xl font-bold h-14 hover:text-emerald-600">
-        <a href="/profile">Login</a>
+        {user ? (
+          <a href="/profile" className="mx-5 hover:text-emerald-600 transition duration-700">
+            {' '}
+            {user.name}{' '}
+          </a>
+        ) : (
+          <a href="/http://localhost:8000/auth/spotify" className="mx-5 hover:text-emerald-600">
+            Login
+          </a>
+        )}
       </div>
     </header>
   );

@@ -44,10 +44,10 @@ const MyProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <nav className="py-8">
-        <h1 className="text-3xl font-bold text-center">My profile</h1>
+      <nav className="py-8 flex justify-center p-20 m-10">
+        <h1 className="text-3xl font-bold text-center open-sans">My profile</h1>
       </nav>
-      <main className="max-w-4xl mx-auto px-4">
+      <main className="flex justify-center md:justify-start max-w-4xl mx-auto px-4">
         {user && (
           <div>
             <h2 className="text-2xl font-semibold mb-4">
@@ -59,8 +59,8 @@ const MyProfile = () => {
               <li>Name: {user.name}</li>
             </ul>
             <h4 className="text-xl font-semibold">
-              <a href="/favorites" className="text-blue-500 hover:underline">
-                Check your top 5 tracks
+              <a href="/recommendations" className="text-blue-500 font-bold hover:text-lime-600 transition duration-700">
+                Check some recommended tracks
               </a>
             </h4>
           </div>

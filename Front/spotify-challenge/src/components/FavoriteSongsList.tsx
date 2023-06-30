@@ -12,7 +12,7 @@ interface Song {
   albumImage: string;
 }
 
-const FavoriteSongs = () => {
+const FavoriteSongsList = () => {
   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -20,11 +20,13 @@ const FavoriteSongs = () => {
     const getFavoriteSongs = async () => {
       try {
         const response = await axios.get('http://localhost:8000/favorites', {
-          withCredentials: true
+          withCredentials: true,
         });
         setFavoriteSongs(response.data);
       } catch (error: any) {
-        const errorMessage = error.response?.data?.error || 'Error al obtener las canciones favoritas';
+        const errorMessage =
+          error.response?.data?.error ||
+          'Error al obtener las canciones favoritas';
         setError(errorMessage);
       }
     };
@@ -66,4 +68,4 @@ const FavoriteSongs = () => {
   );
 };
 
-export default FavoriteSongs;
+export default FavoriteSongsList;

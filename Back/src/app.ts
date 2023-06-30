@@ -61,7 +61,6 @@ app.use(passport.session());
 // Routes
 app.use("/", spotifyRouter);
 app.use("/auth/spotify", spotifyRouter);
-app.use("/auth/spotify/callback", spotifyRouter);
 app.use("/profile", spotifyRouter);
 app.use("/favorites", spotifyRouter);
 app.use("/recommendations", spotifyRouter);

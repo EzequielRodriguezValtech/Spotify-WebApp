@@ -62,6 +62,7 @@ app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use("/", routes_1.default);
 app.use("/auth/spotify", routes_1.default);
+app.use("/auth/spotify/callback", routes_1.default);
 app.use("/profile", routes_1.default);
 app.use("/favorites", routes_1.default);
 app.use("/recommendations", routes_1.default);

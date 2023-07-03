@@ -30,6 +30,7 @@ async function getRecomendedSongs(req: Request, res: Response) {
     const response = await getRecommendedSongsTracks(idSongs, 10, accessToken);
 
     const recommendedTracks = response.tracks.map((track: any) => ({
+      id: track.id,
       name: track.name,
       artist: track.artists[0]?.name || "",
       duration: track.duration_ms || 0,

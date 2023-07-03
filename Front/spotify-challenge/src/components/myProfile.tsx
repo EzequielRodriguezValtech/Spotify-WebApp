@@ -62,7 +62,13 @@ const MyProfile = () => {
               <a href="/recommendations" className="text-blue-500 font-bold hover:text-lime-600 transition duration-700">
                 Check some recommended tracks
               </a>
-            </h4>
+              </h4>
+              <h4>
+              <a href="/favorites" className="text-blue-500 font-bold hover:text-lime-600 transition duration-700">
+                Check your favorites Songs
+              </a>
+              </h4>
+
           </div>
         )}
       </main>

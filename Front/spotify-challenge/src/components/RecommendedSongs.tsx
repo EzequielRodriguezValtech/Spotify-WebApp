@@ -65,8 +65,8 @@ const RecommendedSongs: React.FC = () => {
       ) : (
         <div className="w-full md:w-2/3">
           <ul>
-            {recommendedSongs.map((song) => (
-              <li key={song.id} className="mb-8">
+            {recommendedSongs.map((song, index) => (
+              <li key={`id-${index+1}`} className="mb-8">
                 <h2 className="text-xl font-bold">{song.name}</h2>
                 <p className="text-gray-400">by {song.artist}</p>
                 <p className="text-gray-400">Duration: {song.duration}</p>

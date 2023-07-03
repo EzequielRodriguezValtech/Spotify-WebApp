@@ -4,7 +4,7 @@ import WelcomeHome from './pages/welcomeHome';
 import SpotifyLogin from './components/SpotifyLogin';
 import SpotifyCallback from './components/SpotifyCallback';
 import Profile from './pages/profile';
-import FavoriteSongs from './pages/favoriteSongs';
+import FavoriteSongs from './pages/FavoriteSongs';
 import RecommendedSongs from './components/RecommendedSongs';
 
 const App: React.FC = () => {

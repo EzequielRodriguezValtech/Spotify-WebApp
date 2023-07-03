@@ -7,8 +7,7 @@ import '../index.css';
 
 const WelcomeMessage: React.FC = () => {
   return (
-    <body>
-      <main className='flex flex-col justify-center items-center'>
+          <main className='flex flex-col justify-center items-center'>
         <div className="my-20 mx-5 flex justify-center">
           <h1 className="text-6xl font-bold open-sans text-center text-stone-700 hover:text-lime-600 transition duration-700">
             Bienvenidos a{' '}
@@ -97,7 +96,7 @@ const WelcomeMessage: React.FC = () => {
           </div>
         </div>
       </main>
-    </body>
+
   );
 };
 

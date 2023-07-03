@@ -3,6 +3,7 @@ import spotifyLogo from '../images/Spotify_Logo_RGB_White.png';
 import 'tailwindcss/tailwind.css';
 import '../index.css';
 import axios from 'axios';
+import SpotifyLogin from './SpotifyLogin';
 
 interface User {
   spotifyId: string;
@@ -56,10 +57,9 @@ const SpotifyHeader: React.FC = () => {
             {user.name}{' '}
           </a>
         ) : (
-          <a href="/http://localhost:8000/auth/spotify" className="mx-5 hover:text-emerald-600">
-            Login
-          </a>
+          <SpotifyLogin />
         )}
+        
       </div>
     </header>
   );

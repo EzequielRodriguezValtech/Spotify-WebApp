@@ -48,7 +48,7 @@ const SpotifyHeader: React.FC = () => {
           href="https://github.com/EzequielRodriguezValtech/Spotify-WebApp"
           className="mx-5 hover:text-emerald-600 transition duration-700"
         >
-          Documentación
+          Documentation
         </a>
 
         {user ? (

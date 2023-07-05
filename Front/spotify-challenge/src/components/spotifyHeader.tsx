@@ -4,6 +4,7 @@ import 'tailwindcss/tailwind.css';
 import '../index.css';
 import axios from 'axios';
 import SpotifyLogin from './SpotifyLogin';
+import LogoutButton from './LogoutButton';
 
 interface User {
   spotifyId: string;
@@ -52,14 +53,16 @@ const SpotifyHeader: React.FC = () => {
         </a>
 
         {user ? (
-          <a href="/profile" className="mx-5 hover:text-emerald-600 transition duration-700">
+          <><a href="/profile" className="mx-5 hover:text-emerald-600 transition duration-700">
             {' '}
             {user.name}{' '}
-          </a>
+          </a><LogoutButton /></>
         ) : (
           <SpotifyLogin />
         )}
         
+      
+
       </div>
     </header>
   );

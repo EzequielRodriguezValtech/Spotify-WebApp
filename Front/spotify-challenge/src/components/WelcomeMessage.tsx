@@ -25,7 +25,7 @@ const WelcomeMessage: React.FC = () => {
       >
         <div
           title="musica"
-          className="servicesContainer flex flex-wrap justify-center items-center gap-x-5"
+          className="servicesContainer"
         >
           <div className="basis-1/3 flex flex-col items-center content gap-5">
             <h3 className="font-bold">Music</h3>
@@ -51,7 +51,7 @@ const WelcomeMessage: React.FC = () => {
 
         <div
           title="podcasts"
-          className="servicesContainer flex flex-wrap justify-center items-center gap-x-5"
+          className="servicesContainer"
         >
           <div className="basis-1/3">
             <img
@@ -76,7 +76,7 @@ const WelcomeMessage: React.FC = () => {
 
         <div
           title="videos"
-          className="servicesContainer flex flex-wrap justify-center items-center gap-x-5"
+          className="servicesContainer "
         >
           <div className="basis-1/3 flex flex-col items-center content gap-5">
             <h3 className="font-bold">Videos</h3>

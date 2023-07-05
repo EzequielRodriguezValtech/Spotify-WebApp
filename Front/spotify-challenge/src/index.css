@@ -134,7 +134,10 @@ header {
 }
 
 .servicesContainer {
+  display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   font-size: medium;
   padding: 20px;
   gap: 42px;
@@ -154,6 +157,7 @@ header {
 /* RESPONSIVE WELCOME PAGE */
 @media (min-width: 768px) {
   .servicesContainer {
+    display: flex;
     flex-direction: row;
     font-size: large;
   }

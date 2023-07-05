@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import WelcomeHome from './pages/welcomeHome';
+import WelcomeHome from './pages/WelcomeHome';
 import SpotifyLogin from './components/SpotifyLogin';
 import SpotifyCallback from './components/SpotifyCallback';
-import Profile from './pages/profile';
+import Profile from './pages/Profile';
 import FavoriteSongs from './pages/FavoriteSongs';
 import RecommendedSongsPage from './pages/RecommendedSongsPage';
 

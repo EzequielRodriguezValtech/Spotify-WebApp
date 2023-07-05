@@ -1,18 +1,17 @@
-import MyProfile from '../components/myProfile';
 import 'tailwindcss/tailwind.css';
 import SpotifyHeader from '../components/spotifyHeader';
-import SpotifyFooter from '../components/spotifyFooter';
 
-const Profile = () => {
+import SpotifyFooter from '../components/spotifyFooter';
+import RecommendedSongs from '../components/RecommendedSongs';
+
+const FavoriteSongs = () => {
   return (
     <>
       <SpotifyHeader />
-      <MyProfile />
+      <RecommendedSongs />
       <SpotifyFooter />
     </>
-
-    
   );
 };
 
-export default Profile;
+export default FavoriteSongs;

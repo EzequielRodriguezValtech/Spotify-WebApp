@@ -3,6 +3,7 @@ import { PrismaClient, Song } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export function extractSongDataToSave(items: any[], spotifyUserId?: string): Song[] {
+  //@ts-ignore
   return items.map((item: any) => {
     return {
       id: item.id,
@@ -16,6 +17,7 @@ export function extractSongDataToSave(items: any[], spotifyUserId?: string): Son
 }
 
 export function extractSongData(items: Song[]): Song[] {
+  //@ts-ignore
   return items.map((item: any) => {
     return {
       id: item.id,

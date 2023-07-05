@@ -19,7 +19,7 @@ passport.serializeUser((user, done) => {
 
 // Deserializar el usuario de la sesión
 passport.deserializeUser<any, any>(
-  (user: any, done: (arg0: null, arg1: any) => void) => {
+  (user: any, done: (err: null, user: any) => void) => {
     done(null, user);
   }
 );
@@ -40,8 +40,8 @@ app.use(cors(corsOptions));
 app.use(
   session({
     secret: SPOTIFY_CLIENT_SECRET,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
   }),
   express.json()
 );
@@ -65,8 +65,9 @@ app.use("/auth/spotify/callback", spotifyRouter);
 app.use("/profile", spotifyRouter);
 app.use("/favorites", spotifyRouter);
 app.use("/recommendations", spotifyRouter);
-app.post("/playlist/create", spotifyRouter);
+app.use("/playlist/create", spotifyRouter);
 app.use("/logout", spotifyRouter);
+
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");

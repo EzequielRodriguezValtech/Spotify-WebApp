@@ -2,9 +2,10 @@ import express, { Request, Response } from "express";
 import { GetFavoriteSongs } from "../controllers/favouriteSongsController";
 import { GetProtectedProfile } from "../controllers/protectedProfile";
 import { Welcome } from "../controllers/serverWelcome";
-import passport, { session } from "passport";
+import passport, { LogOutOptions, session } from "passport";
 import { sendRecommendationsToClient } from "../controllers/recommendedSongsController";
 import { createPlaylist } from "../controllers/createPlaylistController";
+import { SPOTIFY_CALLBACK_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from '../config/config';
 
 
 const spotifyRouter = express.Router();
@@ -36,13 +37,24 @@ spotifyRouter.get("/recommendations", sendRecommendationsToClient);
 // Ruta para crear una nueva playlist y agregar canciones
 spotifyRouter.post("/playlist/create", createPlaylist);
 
-//Ruta deslogeo
-spotifyRouter.get("/logout", (req: Request, res: Response) => {
-  req.session.destroy(session);
-  res.redirect("/");
+//Ruta de deslogue
+spotifyRouter.get('/logout', function(req: Request, res: Response) {
+  const logoutOptions: LogOutOptions = {
+    keepSessionInfo: true // Mantener información de sesión, si es necesario
+  };
+
+  req.logout(function(err: any) {
+    if (err) {
+      console.log(err);
+    }
+    // Realizar cualquier limpieza o acciones adicionales necesarias con logoutOptions
+    if (logoutOptions.keepSessionInfo) {
+      // Realizar acciones específicas si se mantiene la información de sesión
+      res.redirect('http://localhost:3000')
+    }
+  });
 });
 
-// spotifyRouter.post("/playlist/add", createPlaylist)
 
 export default spotifyRouter;
 function done(arg0: null, arg1: { authorizationUrl: string }) {

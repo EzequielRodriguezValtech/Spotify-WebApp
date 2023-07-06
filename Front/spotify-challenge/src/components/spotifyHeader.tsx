@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import spotifyLogo from '../images/Spotify_Logo_RGB_White.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import 'tailwindcss/tailwind.css';
 import '../index.css';
 import axios from 'axios';
-import SpotifyLogin from './SpotifyLogin';
-import LogoutButton from './LogoutButton';
+import Navbar from './SlidingMenu';
+import HeaderLinks from './HeaderLinks';
 
 interface User {
   spotifyId: string;
@@ -15,6 +17,12 @@ interface User {
 }
 
 const SpotifyHeader: React.FC = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -44,25 +52,20 @@ const SpotifyHeader: React.FC = () => {
         </a>
       </div>
 
-      <div className="hiddenLinks">
-        <a
-          href="https://github.com/EzequielRodriguezValtech/Spotify-WebApp"
-          className="mx-5 hover:text-emerald-600 transition duration-700"
-        >
-          Documentation
-        </a>
+      {!open ? (
+        <menu onClick={handleClick} className="slideMenuButton">
+          <FontAwesomeIcon icon={faChevronDown} style={{ color: '#f1f5f9' }} />
+        </menu>
+      ) : (
+        <menu onClick={handleClick} className="slideMenuButton">
+          <FontAwesomeIcon icon={faChevronUp} style={{ color: '#f1f5f9' }} />
+        </menu>
+      )}
 
-        {user ? (
-          <><a href="/profile" className="mx-5 hover:text-emerald-600 transition duration-700">
-            {' '}
-            {user.name}{' '}
-          </a><LogoutButton /></>
-        ) : (
-          <SpotifyLogin />
-        )}
-        
-      
+      <Navbar open={open} user={user || undefined} />
 
+      <div className="visibleLinks">
+        <HeaderLinks user={user || undefined} />
       </div>
     </header>
   );

@@ -10,7 +10,7 @@
   return (
       <>
           <div className="todo">
-              <div className="menu">
+              <div>
                   <button onClick={SpotifyLogin}>Login</button>
               </div>
               <div className="inicio">

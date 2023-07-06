@@ -6,12 +6,12 @@ import 'tailwindcss/tailwind.css';
 
 const WelcomeHome = () => {
   return (
-    <div className="flex flex-col h-screen">
+    <>
       <SpotifyHeader />
       <WelcomeMessage />
       <SpotifyLogin />
       <SpotifyFooter />
-    </div>
+    </>
   );
 };
 

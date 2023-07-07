@@ -1,6 +1,6 @@
 import React from 'react';
-import SpotifyHeader from '../components/spotifyHeader';
-import SpotifyFooter from '../components/spotifyFooter';
+import SpotifyHeader from '../components/SpotifyHeader';
+import SpotifyFooter from '../components/SpotifyFooter';
 
 const SpotifyLogin: React.FC = () => {
   const handleLogin = () => {

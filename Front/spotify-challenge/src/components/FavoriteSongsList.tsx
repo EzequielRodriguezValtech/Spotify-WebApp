@@ -35,12 +35,12 @@ const FavoriteSongsList = () => {
   }, []);
 
   // Función auxiliar para convertir segundos a formato de minutos y segundos
- const formatDuration = (duration: number): string => {
-  const minutes = Math.floor(duration / 60);
-  const seconds = duration % 60;
+  function formatDuration(milliseconds: number): string {
+    const seconds = Math.floor((milliseconds / 1000) % 60);
+    const minuts = Math.floor((milliseconds / 1000) / 60);
+    return `${minuts}:${seconds.toString().padStart(2, '0')}`;
+  }
 
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-};
 
   return (
     <div className="flex flex-col items-center bg-black text-white py-8">

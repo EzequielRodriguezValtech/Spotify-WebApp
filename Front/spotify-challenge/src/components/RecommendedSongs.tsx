@@ -55,6 +55,12 @@ const RecommendedSongs: React.FC = () => {
     console.log("Creando playlist con las siguientes canciones:", selectedSongs);
   };
 
+  function formatDuration(milliseconds: number): string {
+    const seconds = Math.floor((milliseconds / 1000) % 60);
+    const minuts = Math.floor((milliseconds / 1000) / 60);
+    return `${minuts}:${seconds.toString().padStart(2, '0')}`;
+  }
+  
   return (
     <div className="flex flex-col items-center bg-gray-900 text-white py-8">
       <h1 className="text-3xl md:text-4xl mt-4 mb-8 font-bold text-center">
@@ -69,7 +75,7 @@ const RecommendedSongs: React.FC = () => {
               <li key={`id-${index+1}`} className="mb-8">
                 <h2 className="text-xl font-bold">{song.name}</h2>
                 <p className="text-gray-400">by {song.artist}</p>
-                <p className="text-gray-400">Duration: {song.duration}</p>
+                <p className="text-gray-400">Duration: {formatDuration(song.duration)}</p>
                 <p className="text-gray-400">Album: {song.album}</p>
                 {selectedSongs.some((selectedSong) => selectedSong.id === song.id) ? (
                   <button

@@ -42,34 +42,43 @@ const MyProfile = () => {
     fetchUser();
   }, []);
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="py-8 flex justify-center p-20 m-10">
-        <h1 className="text-3xl font-bold text-center open-sans">My profile</h1>
+   return (
+    <div className="min-h-screen bg-gray-100 flex flex-col  items-center">
+      <nav className="py-8 flex justify-center p-4 md:p-8">
+        <h1 className="text-3xl font-bold text-center">My Profile</h1>
       </nav>
-      <main className="flex justify-center md:justify-start max-w-4xl mx-auto px-4">
-        {user && (
-          <div>
+      <main className="flex justify-center items-center max-w-4xl mx-auto px-4">
+        {user ? (
+          <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">
               Welcome again, {user.spotifyId}!
             </h2>
             <hr className="my-4" />
             <ul className="mb-4">
-              <li>Email: {user.email}</li>
-              <li>Name: {user.name}</li>
+              <li className="mb-2">
+                <span className="font-semibold">Email:</span> {user.email}
+              </li>
+              <li className="mb-2">
+                <span className="font-semibold">Name:</span> {user.name}
+              </li>
             </ul>
-            <h4 className="text-xl font-semibold">
-              <a href="/recommendations" className="text-blue-500 font-bold hover:text-lime-600 transition duration-700">
-                Check some recommended tracks
+            <div className="flex flex-col space-y-2">
+              <a
+                href="/recommendations"
+                className="bg-blue-500 text-white font-bold hover:bg-blue-600 py-2 px-4 rounded transition duration-300"
+              >
+                Check Some Recommended Tracks
               </a>
-              </h4>
-              <h4>
-              <a href="/favorites" className="text-blue-500 font-bold hover:text-lime-600 transition duration-700">
-                Check your favorites Songs
+              <a
+                href="/favorites"
+                className="bg-blue-500 text-white font-bold hover:bg-blue-600 py-2 px-4 rounded transition duration-300"
+              >
+                Check Your Favorite Songs
               </a>
-              </h4>
-
+            </div>
           </div>
+        ) : (
+          <p>Loading user profile...</p>
         )}
       </main>
     </div>

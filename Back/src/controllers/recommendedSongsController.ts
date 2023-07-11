@@ -36,6 +36,7 @@ async function getRecomendedSongs(req: Request, res: Response) {
       duration: track.duration_ms || 0,
       album: track.album.name,
       uri: track.uri, // Agregar el track URI
+      url: track.external_urls?.spotify || "",
     }));
 
     return recommendedTracks;

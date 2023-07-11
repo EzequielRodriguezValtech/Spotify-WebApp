@@ -41,7 +41,6 @@ const FavoriteSongsList = () => {
     return `${minuts}:${seconds.toString().padStart(2, '0')}`;
   }
 
-
   return (
     <div className="flex flex-col items-center bg-black text-white py-8">
       <h1 className="text-3xl md:text-4xl mt-4 mb-8 font-bold text-center">
@@ -51,11 +50,8 @@ const FavoriteSongsList = () => {
         <p className="text-red-500">{`Error: ${error}`}</p>
       ) : (
         <ul className="w-full md:w-2/3">
-          {favoriteSongs.map((song: Song) => (
-            <li
-              key={song.id}
-              className="mb-4 bg-gray-800 rounded-lg p-4"
-            >
+          {favoriteSongs.map((song) => (
+            <li key={song.id} className="mb-4 bg-gray-800 rounded-lg p-4">
               <h2 className="text-xl font-bold">{song.name}</h2>
               <p className="text-gray-400">by {song.artist}</p>
               <p className="text-gray-400">Duration: {formatDuration(song.duration)}</p>

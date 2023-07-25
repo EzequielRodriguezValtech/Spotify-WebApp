@@ -26,53 +26,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var passport_1 = __importDefault(require("passport"));
-var express_session_1 = __importDefault(require("express-session"));
-var path = __importStar(require("path"));
-var routes_1 = __importDefault(require("./routes/routes"));
-var cors_1 = __importDefault(require("cors"));
-var passportStrategy_1 = require("./Middlewares/SpotifyStrategyMiddlewares/passportStrategy");
-var config_1 = require("./config/config");
+const express_1 = __importDefault(require("express"));
+const passport_1 = __importDefault(require("passport"));
+const path = __importStar(require("path"));
+const cors_1 = __importDefault(require("cors"));
+const passportStrategy_1 = require("./Middlewares/SpotifyStrategyMiddlewares/passportStrategy");
+const corsOptions_1 = require("./Middlewares/corsOptions");
+const appConfig_1 = require("./helpers/apphelpers/appConfig");
 passport_1.default.use(passportStrategy_1.spotifyStrategy);
 passport_1.default.authenticate("spotify", { failureRedirect: "/auth/spotify" });
-passport_1.default.serializeUser(function (user, done) {
-    done(null, user);
-});
-passport_1.default.deserializeUser(function (user, done) {
-    done(null, user);
-});
-var app = (0, express_1.default)();
-var corsOptions = {
-    origin: "http://localhost:3000",
-    methods: "GET, POST, PUT, DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-};
-app.use((0, cors_1.default)(corsOptions));
-app.use((0, express_session_1.default)({
-    secret: config_1.SPOTIFY_CLIENT_SECRET,
-    resave: false,
-    saveUninitialized: false,
-}), express_1.default.json());
+const app = (0, express_1.default)();
+app.use((0, cors_1.default)(corsOptions_1.corsOptions));
+app.use((0, cors_1.default)(corsOptions_1.corsOptions));
+app.use(express_1.default.json());
 app.use(express_1.default.static(path.join(__dirname, "..", "front", "public")));
 app.set("views", path.join(__dirname, "front/views"));
 app.set("view engine", "ejs");
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
-app.use("/", routes_1.default);
-app.use("/auth/spotify", routes_1.default);
-app.use("/auth/spotify/callback", routes_1.default);
-app.use("/profile", routes_1.default);
-app.use("/favorites", routes_1.default);
-app.use("/recommendations", routes_1.default);
-app.use("/playlist/create", routes_1.default);
-app.use("/logout", routes_1.default);
-app.use(function (req, res, next) {
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    next();
-});
-var port = 8000;
-app.listen(port, function () {
-    console.log("Server listening on port ".concat(port));
-});
+(0, appConfig_1.initializeApp)(app);
+const port = 8000;
+(0, appConfig_1.createServer)(app, port);

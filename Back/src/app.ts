@@ -1,51 +1,23 @@
 import express from "express";
 import passport from "passport";
-import session from "express-session";
 import * as path from "path";
-import spotifyRouter from "./routes/routes";
 import cors from "cors";
 import { spotifyStrategy } from "./Middlewares/SpotifyStrategyMiddlewares/passportStrategy";
-import { SPOTIFY_CLIENT_SECRET } from "./config/config";
-
+import { corsOptions } from "./Middlewares/corsOptions";
+import { initializeApp, createServer } from "./helpers/apphelpers/appConfig";
 
 passport.use(spotifyStrategy);
 
 passport.authenticate("spotify", { failureRedirect: "/auth/spotify" });
 
-// Serializar el usuario en la sesión
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-// Deserializar el usuario de la sesión
-passport.deserializeUser<any, any>(
-  (user: any, done: (err: null, user: any) => void) => {
-    done(null, user);
-  }
-);
-
 // Configuración de Express
 const app = express();
 
-// Configurar CORS con opciones personalizadas
-const corsOptions: cors.CorsOptions = {
-  origin: "http://localhost:3000", // Especifica el origen permitido
-  methods: "GET, POST, PUT, DELETE", // Especifica los métodos permitidos
-  allowedHeaders: ["Content-Type", "Authorization"], // Especifica los encabezados permitidos
-  credentials: true,
-  // exposedHeaders: ["Content-Security-Policy"],
-};
+app.use(cors(corsOptions));
 
 app.use(cors(corsOptions));
 
-app.use(
-  session({
-    secret: SPOTIFY_CLIENT_SECRET,
-    resave: false,
-    saveUninitialized: false,
-  }),
-  express.json()
-);
+app.use(express.json());
 
 // Configurar la carpeta estática
 app.use(express.static(path.join(__dirname, "..", "front", "public")));
@@ -56,27 +28,9 @@ app.set("views", path.join(__dirname, "front/views"));
 // Configurar el motor de plantillas
 app.set("view engine", "ejs");
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Routes
-app.use("/", spotifyRouter);
-app.use("/auth/spotify", spotifyRouter);
-app.use("/auth/spotify/callback", spotifyRouter);
-app.use("/profile", spotifyRouter);
-app.use("/favorites", spotifyRouter);
-app.use("/recommendations", spotifyRouter);
-app.use("/playlist/create", spotifyRouter);
-app.use("/logout", spotifyRouter);
-
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
+// Llamamos a la función initializeApp para configurar las rutas
+initializeApp(app);
 
 // Puerto de escucha
 const port = 8000;
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+createServer(app, port);

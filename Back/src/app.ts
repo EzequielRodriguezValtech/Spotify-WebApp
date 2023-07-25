@@ -15,8 +15,6 @@ const app = express();
 
 app.use(cors(corsOptions));
 
-app.use(cors(corsOptions));
-
 app.use(express.json());
 
 // Configurar la carpeta estática
@@ -34,3 +32,5 @@ initializeApp(app);
 // Puerto de escucha
 const port = 8000;
 createServer(app, port);
+export { initializeApp, createServer };
+

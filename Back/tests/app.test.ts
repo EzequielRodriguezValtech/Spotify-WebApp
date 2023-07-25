@@ -1,6 +1,7 @@
+import { describe, beforeEach, it, expect, afterEach } from "@jest/globals";
 import request from "supertest";
 import express from "express";
-import { initializeApp, createServer } from "../app";
+import { initializeApp, createServer } from "../src/app";
 
 describe("Test de la aplicación", () => {
   let app: express.Express;
@@ -25,6 +26,4 @@ describe("Test de la aplicación", () => {
     const response = await request(app).get("/ruta-no-existente");
     expect(response.status).toBe(404);
   });
-
-  // Agrega más casos de prueba según las rutas y funcionalidades que desees probar.
 });

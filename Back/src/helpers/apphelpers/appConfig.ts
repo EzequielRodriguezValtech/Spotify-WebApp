@@ -5,8 +5,6 @@ import { spotifyStrategy } from "../../Middlewares/SpotifyStrategyMiddlewares/pa
 import { SPOTIFY_CLIENT_SECRET } from "../../config/config";
 import { configureRoutes } from "../../routes/routes";
 
-
-// Función que inicializa la aplicación y configura las rutas
 // Función que inicializa la aplicación y configura las rutas
 export function initializeApp(app: express.Express) {
   // Inicializar el middleware de express-session

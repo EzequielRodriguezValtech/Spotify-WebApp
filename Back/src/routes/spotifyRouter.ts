@@ -55,6 +55,3 @@ spotifyRouter.get('/logout', function(req: Request, res: Response) {
 
 
 export default spotifyRouter;
-function done(arg0: null, arg1: { authorizationUrl: string }) {
-  throw new Error("Function not implemented.");
-}

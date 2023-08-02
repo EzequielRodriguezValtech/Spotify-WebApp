@@ -11,13 +11,13 @@ generator client {
 }
 
 model Song {
-  id       String   @id @unique
-  name     String
-  artist   String
-  duration Int
-  album    String
-  userId   Int
-  user     User   @relation(fields: [userId], references: [id])
+  id            String   @id @unique
+  name          String
+  artist        String
+  duration      Int
+  album         String
+  spotifyUserId String
+  user     User   @relation(fields: [spotifyUserId], references: [spotifyId])
 }
 
 model User {

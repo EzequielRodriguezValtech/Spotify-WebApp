@@ -1,0 +1,256 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Importa la fuente de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@200&display=swap');
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(243 244 246);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+footer {
+  height: fit-content;
+}
+
+.fontCaprasimo {
+  font-family: caprasimo, cursive;
+}
+
+.fontGeologica {
+  font-family: geologica, sans-serif;
+}
+
+/* HEADER */
+.visibleLinks {
+  display: none;
+  visibility: hidden;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: space-around;
+  height: 7rem;
+}
+
+.slideMenuButton {
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 10px;
+  color: "#f1f5f9";
+}
+
+.slideMenuButton svg {
+  vertical-align: middle;
+}
+
+.slide-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background: rgb(0 0 0);
+  position: absolute;
+  top: 9.5rem;
+  width: 100%;
+  height: 80vh;
+  transition: top 0.3s linear;
+}
+
+.slide-menu--closed {
+  top: -100%;
+}
+
+.headerLinks {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: x-large;
+  gap: 10px;
+}
+
+/* MEDIDAS RESPONSIVE HEADER */
+@media (min-width: 768px) {
+  header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 7rem;
+    gap: 42px;
+  }
+
+  .hiddenLinks {
+    display: none;
+    visibility: hidden;
+  }
+
+  .visibleLinks {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: large;
+    font-weight: bold;
+    visibility: visible;
+  }
+
+  .headerLinks {
+    display: flex;
+    flex-direction: row;
+    font-size: large;
+    justify-content: center;
+  }
+
+  .spotifyLogo {
+    justify-content: flex-start;
+  }
+
+  .slideMenuButton {
+    display: none;
+    visibility: hidden;
+  }
+
+  .slide-menu {
+    top: -100%;
+  }
+}
+
+
+/* FOOTER */
+.mainContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-size: x-large;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 42px;
+}
+
+.logoContainer {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5rem;
+  margin-top: 5rem;
+  width: fit-content;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  gap: 42px;
+}
+
+/* RESPONSIVE FOOTER */
+@media (min-width: 768px) {
+
+  .row {
+    flex-direction: row;
+
+  }
+
+  .linksContainer {
+    justify-content: center;
+  }
+}
+
+@media (min-width: 1440px) {
+  .mainContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .logoContainer {
+    flex-basis: 100%;
+  }
+
+  .row {
+    flex-basis: 50%;
+  }
+}
+
+/* WELCOME PAGE */
+.mainServicesContainer {
+  align-items: center;
+}
+
+.servicesContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: medium;
+  padding: 20px;
+  gap: 42px;
+}
+
+.servicesContainer h3 {
+  font-size: xx-large;
+}
+
+.separateLine {
+  background-color: #91A3B0;
+  width: 80%;
+  height: 2px;
+  border-radius: 5px;
+}
+
+/* RESPONSIVE WELCOME PAGE */
+@media (min-width: 768px) {
+  .servicesContainer {
+    display: flex;
+    flex-direction: row;
+    font-size: large;
+  }
+
+  .separateLine {
+    background-color: #91A3B0;
+    width: 60%;
+    height: 2px;
+    border-radius: 5px;
+  }
+
+  .servicesImages {
+    height: 15rem;
+    width: 25rem;
+  }
+}
+
+@media (min-width: 999px) {
+  .servicesImages {
+    height: max-content;
+    width: max-content;
+  }
+}
+
+/* PROFILE PAGE */
+
+
+/* RESPONSIVE PROFILE PAGE */
+@media (min-width: 768px) {
+  main {
+    justify-content: flex-start;
+  }
+}
